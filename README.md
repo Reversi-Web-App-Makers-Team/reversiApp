@@ -1,2 +1,2 @@
-# Reversi-Web-App-API
+# reversiApp
 put files about web app here
