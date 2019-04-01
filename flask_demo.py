@@ -1,5 +1,5 @@
 import sqlite3
-
+import numpy as np
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -22,49 +22,58 @@ from sqlite3_commands import REGISTER_BOARD_INFO
 from sqlite3_commands import GET_BOARD_INFO
 from sqlite3_commands import UPDATE_BOARD_INFO 
 
-import numpy as np
 
 app = Flask(__name__)
-
 
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect('game_info.db')
+        db = g._database = sqlite3.connect('reversi.db')
     return db
 
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
-        db.close()
+         db.close()
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/home/') 
+@app.route('/home/', methods=['POST']) 
 def home():
-    # db = get_db()
-    # curs = db.cursor()
-    # cursor.exexute()
+    db = get_db()
+    curs = db.cursor()
+
+    player_name = request.values["name"]
+    board_filled_with_2, player_color = get_initial_status()
+    board_filled_with_2_strings = intlist2string(board_filled_with_2)
+
+    curs.exexute(CREATE_NAME_TABLE)
+
+    if player_color == 1:
+        curs.execute(REGISTER_PLAYER_WHITE_NAME.format(player_name))
+
+    elif player_color == -1:
+        curs.execute(REGISTER_PLAYER_BLACK_NAME.format(player_name))
+
+    cusr.execute(CREATE_BOARD_INFO_TABLE)
+    curs.execute(REGISTER_BOARD_INFO.format(board_filled_with_2_strings))
+
+    db.commit()
+    curs.close()
+
     return render_template('home.html')
 
-@app.route('/mode_select/')
+@app.route('/mode_select/', methods=['POST'])
 def mode_select(username=None):
     return render_template('mode_select.html')
 
 @app.route('/game/dqn/')
 def dqn():
-    mat = [[0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0]]
-    return render_template('dqn.html', black_player="いより", white_player="dqn", Board_Matrix=mat)
+    mat = np.zeros((8,8)).tolist()
+    return render_template('dqn.html', black_player="いより", white_player="dqn", Board_Matrix=[mat])
 
 
 @app.route('/fin/', methods=["GET"])
