@@ -1,5 +1,5 @@
 import sqlite3
-
+import numpy as np
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -22,8 +22,6 @@ from sqlite3_commands import REGISTER_BOARD_INFO
 from sqlite3_commands import GET_BOARD_INFO
 from sqlite3_commands import UPDATE_BOARD_INFO 
 
-import numpy as np
-
 app = Flask(__name__)
 
 
@@ -45,9 +43,10 @@ def index():
 
 @app.route('/home/') 
 def home():
-    # db = get_db()
-    # curs = db.cursor()
-    # cursor.exexute()
+    db = get_db()
+    curs = db.cursor()
+    
+    cursor.exexute()
     return render_template('home.html')
 
 @app.route('/mode_select/')
