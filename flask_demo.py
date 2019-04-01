@@ -58,11 +58,11 @@ def mode_select():
     curs.exexute(CREATE_NAME_TABLE)
 
     if player_color == 1:
-        curs.execute(REGISTER_PLAYER_WHITE_NAME.format(player_name))
+        curs.execute(REGISTER_PLAYER_WHITE_NAME.format(username))
     else:
-        curs.execute(REGISTER_PLAYER_BLACK_NAME.format(player_name))
+        curs.execute(REGISTER_PLAYER_BLACK_NAME.format(username))
 
-    cusr.execute(CREATE_BOARD_INFO_TABLE)
+    curs.execute(CREATE_BOARD_INFO_TABLE)
     curs.execute(REGISTER_BOARD_INFO.format(board_filled_with_2_strings, -1))
 
     db.commit()
@@ -100,13 +100,13 @@ def dqn(index=None):
                 board_list_with_2_strings, next_turn
                 ))
     
-        db.commit()
-        curs.closr()
-
         board_list, putable_pos = get_simple_board(board_list_with_2)
         board_matrix = list2matrix(board_list)
         black_player = curs.execute(GET_PLAYER_BLACK_NAME)
         white_player = curs.execute(GET_PLAYER_WHITE_NAME)
+
+        db.commit()
+        curs.close()
 
         return render_template(
                 'dqn.html',
@@ -144,26 +144,22 @@ def dqn(index=None):
                             board_list_with_2_strings, next_turn
                             ))
 
-        # it's player's turn (ask put index again)
-        else:
-            # update database before page changing
-            curs.execute(UPDATE_BOARD_INFO.format(
-                board_list_with_2_strings, next_turn
-                ))
-            db.commit()
-            curs.close()
+            # it's player's turn (ask put index again)
+            else:
+                db.commit()
+                curs.close()
 
-            board_list, putable_pos = get_simple_board(board_list_with_2)
-            board_matrix = list2matrix(board_list)
+                board_list, putable_pos = get_simple_board(board_list_with_2)
+                board_matrix = list2matrix(board_list)
     
-            return render_template(
-                    'dqn.html',
-                    black_player=black_player,
-                    white_player=white_player,
-                    board_matrix=board_matrix,
-                    putable_pos=putable_pos,
-                    winner=winner
-                    )
+                return render_template(
+                        'dqn.html',
+                        black_player=black_player,
+                        white_player=white_player,
+                        board_matrix=board_matrix,
+                        putable_pos=putable_pos,
+                        winner=winner
+                        )
 
 @app.route('/fin', methods=['POST'])
 def fin():
