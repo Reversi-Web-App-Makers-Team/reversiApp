@@ -15,6 +15,7 @@ from sqlite3_commands import UPDATE_BLACK_PLAYER_BOARD
 
 app = Flask(__name__)
 
+
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -31,27 +32,24 @@ def close_connection(exception):
 def index():
     return render_template('index.html')
 
-@app.route('/home')
+@app.route('/home/', methods=["GET", "POST"])
 def home():
-    db = get_db()
-    curs = db.cursor()
-    cursor.exexute()
-    cursor.exexute()
-    cursor.exexute()
-    cursor.exexute()
+    # db = get_db()
+    # curs = db.cursor()
+    # cursor.exexute()
     return render_template('home.html')
 
-@app.route('/mode_select/')
+@app.route('/mode_select/', methods=["GET", "POST"])
 def mode_select(username=None):
     username = request.values['username']
-    return render_template('mode_select.html', username=username)
+    return render_template('mode_select.html')
 
-@app.route('/game/dqn/<index>/')
+@app.route('/game/dqn/<index>/', methods=["GET", "POST"])
 def dqn():
     return render_template('dqn.html', username=username)
 
 
-@app.route('/fin/')
+@app.route('/fin/', methods=["GET"])
 def fin():
     return render_template('fin.html', winner="いより")
 
