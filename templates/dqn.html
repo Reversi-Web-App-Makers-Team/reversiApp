@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Reversi Web App</h1>
+
+<p> 白: {{ white_player }} </p>
+
+{% for facs in board_matrix %}
+{% for fac in facs %}
+{{ fac }}<br>
+{% endfor %}
+{% endfor %}
+
+<p> 黒: {{ black_player }} </p>
+
+<p>置ける場所
+<p>
+    {% for pos in putable_pos %}
+    {{ pos }}
+    {% endfor %}
+
+    {% if winner == 0 %}
+    <form ,action="/game/dqn/<index>" method="get">
+        置く場所の番号を入力して下さい:
+<p><input name="index" type="number"/></p>
+<p><input type="submit" value="Submit"></p>
+</form>
+{% else %}
+<form ,action="/fin" method="post">
+    ゲームが終わりました<br>
+    <p><input name="winner" type="number" value="{{ winner }}"/></p>
+    <p><input type="submit" value="Submit"></p>
+</form>
+{% endif %}
+
+</body>
+</html>
