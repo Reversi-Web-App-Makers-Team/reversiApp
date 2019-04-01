@@ -13,6 +13,8 @@ from sqlite3_commands import INITIALIZE_BLACK_PLAYER_INFO
 from sqlite3_commands import GET_WHITE_PLAYER_BOARD
 from sqlite3_commands import UPDATE_BLACK_PLAYER_BOARD
 
+import numpy as np
+
 app = Flask(__name__)
 
 
@@ -32,21 +34,28 @@ def close_connection(exception):
 def index():
     return render_template('index.html')
 
-@app.route('/home/', methods=["GET", "POST"])
+@app.route('/home/') 
 def home():
     # db = get_db()
     # curs = db.cursor()
     # cursor.exexute()
     return render_template('home.html')
 
-@app.route('/mode_select/', methods=["GET", "POST"])
+@app.route('/mode_select/')
 def mode_select(username=None):
-    username = request.values['username']
     return render_template('mode_select.html')
 
-@app.route('/game/dqn/<index>/', methods=["GET", "POST"])
+@app.route('/game/dqn/')
 def dqn():
-    return render_template('dqn.html', username=username)
+    mat = [[0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0]]
+    return render_template('dqn.html', black_player="いより", white_player="dqn", Board_Matrix=mat)
 
 
 @app.route('/fin/', methods=["GET"])
