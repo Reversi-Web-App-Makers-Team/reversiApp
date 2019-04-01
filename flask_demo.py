@@ -5,8 +5,8 @@ from flask import render_template
 from flask import request
 from flask import g
 
-from reversiTools.web_app_reversi_tools import intlist2string
-from reversiTools.web_app_reversi_tools import string2intlist
+from reversiTools.web_app_reversi_tools import intlist2strings
+from reversiTools.web_app_reversi_tools import strings2intlist
 from reversiTools.web_app_reversi_tools import list2matrix
 from reversiTools.web_app_reversi_tools import matrix2list
 from reversiTools.web_app_reversi_tools import get_simple_board
