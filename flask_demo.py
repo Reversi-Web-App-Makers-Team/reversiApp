@@ -43,10 +43,14 @@ def index():
 
 @app.route('/home/') 
 def home():
+    return render_template('home.html')
+
+@app.route('/mode_select/', methods=['POST'])
+def mode_select():
     # db = get_db()
     # curs = db.cursor()
     
-    # player_name = request.form["username"]
+    username = request.form["username"]
     # "board_filled_with_2, player_color = get_initial_status()
     # board_filled_with_2_strings = intlist2string(board_filled_with_2)
 
@@ -64,11 +68,6 @@ def home():
     # db.commit()
     # curs.close()
 
-    return render_template('home.html')
-
-@app.route('/mode_select/', methods=['POST'])
-def mode_select():
-    username = request.form["username"]
     print(username)
     return render_template('mode_select.html')
 
