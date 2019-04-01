@@ -27,17 +27,22 @@ GET_PLAYER_BLACK_NAME = '''
 SELECT username FROM player_name_table WHERE color == -1
 '''
 
+# get player's color
+GET_PLAYER_COLOR = '''
+SELECT color FROM player_name_table LIMIT 1
+'''
+
 # create table reserving the newest board information (1, -1, 0, 2)
 CREATE_BOARD_INFO_TABLE = '''
 CREATE TABLE IF NOT EXISTS board_info_table(
-board TEXT
-)
+board TEXT,
+next_turn INTEGER
 '''
 
 # methods to control board_info_table
 REGISTER_BOARD_INFO = '''
 INSERT INTO board_info_table(board)
-VALUES("{}")
+VALUES("{}, {}")
 '''
 
 GET_BOARD_INFO = '''
@@ -45,5 +50,10 @@ SELECT board FROM board_info_table
 '''
 
 UPDATE_BOARD_INFO = '''
-UPDATE board SET {}
+UPDATE board_info_table
+SET board = {}, next_turn = {}
 '''
+
+GET_NEXT_TURN = '''
+SELECT next_turn FROM board_info_table
+''
