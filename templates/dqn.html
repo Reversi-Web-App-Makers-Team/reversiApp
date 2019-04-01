@@ -4,11 +4,15 @@
 
 <h1>Reversi Web App</h1>
 
-{% for facs in Board_Matrix%}
+<p> 白: {{ white_player }} </p>
+
+{% for facs in Board_Matrix %}
     {% for fac in facs %}
     {{ fac + "  " }} <br>
     {% endfor %}
 {% endfor %}
+
+<p> 黒: {{ black_player }} </p>
 
 <p>置ける場所<p>
 <p>{{ possible pos }}</p>
