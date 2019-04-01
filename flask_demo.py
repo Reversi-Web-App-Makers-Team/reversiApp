@@ -64,6 +64,10 @@ def home():
     db.commit()
     curs.close()
 
+<<<<<<< HEAD
+=======
+>>>>>>> 9808d96d70bfab4ea00c60318e35bc641065521c
+>>>>>>> 8f217642bf19e81c3ae0491c4c4b178590b6a62d
     return render_template('home.html')
 
 @app.route('/mode_select/', methods=['POST'])
