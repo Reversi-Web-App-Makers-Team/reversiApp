@@ -5,13 +5,22 @@ from flask import render_template
 from flask import request
 from flask import g
 
-from sqlite3_commands import CREATE_TABLE
-from sqlite3_commands import INITIALIZE_WHITE_PLAYER_INFO
-from sqlite3_commands import GET_WHITE_PLAYER_BOARD
-from sqlite3_commands import UPDATE_WHITE_PLAYER_BOARD
-from sqlite3_commands import INITIALIZE_BLACK_PLAYER_INFO
-from sqlite3_commands import GET_WHITE_PLAYER_BOARD
-from sqlite3_commands import UPDATE_BLACK_PLAYER_BOARD
+from reversiTools.web_app_reversi_tools import intlist2string
+from reversiTools.web_app_reversi_tools import string2intlist
+from reversiTools.web_app_reversi_tools import list2matrix
+from reversiTools.web_app_reversi_tools import matrix2list
+from reversiTools.web_app_reversi_tools import get_simple_board
+from reversiTools.web_app_reversi_tools import get_initial_status
+from reversiTools.web_app_reversi_tools import step
+from sqlite3_commands import CREATE_PLAYER_NAME_TABLE
+from sqlite3_commands import REGISTER_PLAYER_WHITE_NAME 
+from sqlite3_commands import GET_PLAYER_WHITE_NAME
+from sqlite3_commands import REGISTER_PLAYER_BLACK_NAME
+from sqlite3_commands import GET_PLAYER_BLACK_NAME
+from sqlite3_commands import CREATE_BOARD_INFO_TABLE
+from sqlite3_commands import REGISTER_BOARD_INFO
+from sqlite3_commands import GET_BOARD_INFO
+from sqlite3_commands import UPDATE_BOARD_INFO 
 
 import numpy as np
 
