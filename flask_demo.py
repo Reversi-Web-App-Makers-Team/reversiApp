@@ -35,7 +35,7 @@ def get_db():
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
-        db.close()
+         db.close()
 
 @app.route('/')
 def index():
@@ -44,9 +44,9 @@ def index():
 @app.route('/home/') 
 def home():
     db = get_db()
-    curs = db.cursor()
+    # curs = db.cursor()
     
-    cursor.exexute()
+    # cursor.exexute()
     return render_template('home.html')
 
 @app.route('/mode_select/')
@@ -55,15 +55,8 @@ def mode_select(username=None):
 
 @app.route('/game/dqn/')
 def dqn():
-    mat = [[0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0],
-           [0,0,0,0,0,0,0,0]]
-    return render_template('dqn.html', black_player="いより", white_player="dqn", Board_Matrix=mat)
+    mat = np.zeros((8,8)).tolist()
+    return render_template('dqn.html', black_player="いより", white_player="dqn", Board_Matrix=[mat])
 
 
 @app.route('/fin/', methods=["GET"])
