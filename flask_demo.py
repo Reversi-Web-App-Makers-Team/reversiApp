@@ -41,12 +41,12 @@ def close_connection(exception):
 def index():
     return render_template('index.html')
 
-@app.route('/home/', methods=['POST']) 
+@app.route('/home/', methods=['GET']) 
 def home():
     db = get_db()
     curs = db.cursor()
-
-    player_name = request.values["name"]
+    
+    player_name = request.form["name"]
     board_filled_with_2, player_color = get_initial_status()
     board_filled_with_2_strings = intlist2string(board_filled_with_2)
 
