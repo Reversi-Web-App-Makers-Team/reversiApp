@@ -28,7 +28,7 @@ SELECT username FROM player_name_table WHERE color == -1
 '''
 
 # create table reserving the newest board information (1, -1, 0, 2)
-CREAATE_BOARD_INFO_TABLE = '''
+CREATE_BOARD_INFO_TABLE = '''
 CREATE TABLE IF NOT EXISTS board_info_table(
 board TEXT
 )

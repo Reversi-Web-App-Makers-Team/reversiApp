@@ -5,8 +5,8 @@ from flask import render_template
 from flask import request
 from flask import g
 
-from reversiTools.web_app_reversi_tools import intlist2string
-from reversiTools.web_app_reversi_tools import string2intlist
+from reversiTools.web_app_reversi_tools import intlist2strings
+from reversiTools.web_app_reversi_tools import strings2intlist
 from reversiTools.web_app_reversi_tools import list2matrix
 from reversiTools.web_app_reversi_tools import matrix2list
 from reversiTools.web_app_reversi_tools import get_simple_board
@@ -21,6 +21,8 @@ from sqlite3_commands import CREATE_BOARD_INFO_TABLE
 from sqlite3_commands import REGISTER_BOARD_INFO
 from sqlite3_commands import GET_BOARD_INFO
 from sqlite3_commands import UPDATE_BOARD_INFO 
+
+import numpy as np
 
 app = Flask(__name__)
 
@@ -41,21 +43,28 @@ def close_connection(exception):
 def index():
     return render_template('index.html')
 
-@app.route('/home/', methods=["GET", "POST"])
+@app.route('/home/') 
 def home():
     # db = get_db()
     # curs = db.cursor()
     # cursor.exexute()
     return render_template('home.html')
 
-@app.route('/mode_select/', methods=["GET", "POST"])
+@app.route('/mode_select/')
 def mode_select(username=None):
-    username = request.values['username']
     return render_template('mode_select.html')
 
-@app.route('/game/dqn/<index>/', methods=["GET", "POST"])
+@app.route('/game/dqn/')
 def dqn():
-    return render_template('dqn.html', username=username)
+    mat = [[0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0]]
+    return render_template('dqn.html', black_player="いより", white_player="dqn", Board_Matrix=mat)
 
 
 @app.route('/fin/', methods=["GET"])
