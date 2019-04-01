@@ -6,7 +6,7 @@
 
 <p> 白: {{ white_player }} </p>
 
-{% for facs in Board_Matrix %}
+{% for facs in board_matrix %}
     {% for fac in facs %}
     {{ fac }}<br>
     {% endfor %}
@@ -15,6 +15,23 @@
 <p> 黒: {{ black_player }} </p>
 
 <p>置ける場所<p>
+{% for pos in putable_pos %}
+    {{ pos }}
+{% endfor %}
+
+{% if winner == 0 %}
+    <form action="/game/dqn/<index>", method="get">
+        置く場所の番号を入力して下さい:
+        <p> <input type="number" name="index" /> </p>
+        <p> <input type="submit" value="Submit"> </p>
+    </form>
+{% else %}
+    <form action="/fin", method="post">
+        ゲームが終わりました<br>
+        <p> <input type="number" name="winner" value="{{ winner }}"/> </p>
+        <p> <input type="submit" value="Submit"> </p>
+    </form>
+{% endif %}
 
 </body>
 </html>
