@@ -66,9 +66,9 @@ def home():
 
     return render_template('home.html')
 
-@app.route('/mode_select/')
+@app.route('/mode_select/', methods=['POST'])
 def mode_select():
-    username = request.values["username"]
+    username = request.form["username"]
     print(username)
     return render_template('mode_select.html')
 
