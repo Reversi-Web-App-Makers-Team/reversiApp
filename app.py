@@ -34,12 +34,13 @@ def get_db():
     return db
 
 
+'''
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
-
+'''
 
 @app.route('/')
 def index():
@@ -98,8 +99,6 @@ def dqn(index=None):
         else:
             curs.execute(REGISTER_PLAYER_BLACK_NAME, ('DQN',))
             # play first turn
-            curs.execute(GET_BOARD_INFO)
-            board_list_with_2 = strings2intlist(curs.fetchone()[0])
             curs.execute(GET_NEXT_TURN)
             next_turn = curs.fetchone()[0]
             next_index = get_dqn_move(board_list_with_2, next_turn)
@@ -159,6 +158,7 @@ def dqn(index=None):
                 curs.execute(UPDATE_BOARD_INFO,
                              (board_list_with_2_strings, next_turn)
                              )
+                #TODO -> nishimoto: make case if game finishes with dqn move.
 
             # it's player's turn (ask put index again)
             else:
