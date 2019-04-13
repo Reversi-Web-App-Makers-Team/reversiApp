@@ -7,7 +7,18 @@
 <p> 白: {{ white_player }} </p>
 
 {% for facs in board_matrix %}
-{{ facs }}<br>
+{% for fac in facs %}
+{% if fac == "1" %}
+{{ "⚪"  }}&nbsp;
+{% elif fac == "-1" %}
+{{ "⚫"  }}&nbsp;
+{% elif fac == "0" or fac == "2" %}
+{{ "❌"  }}&nbsp;
+{% else %}
+{{ "0"  }}&nbsp;
+{% endif %}
+{% endfor %}
+<br>
 {% endfor %}
 
 <p> 黒: {{ black_player }} </p>
