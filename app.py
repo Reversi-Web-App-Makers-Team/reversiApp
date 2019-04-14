@@ -94,6 +94,7 @@ def dqn(index=None):
         if dqn_color == 1:
             curs.execute(REGISTER_PLAYER_WHITE_NAME, ('DQN',))
             winner = 0
+            valid_flag = True
 
         # dqn is black player (dqn plays first turn)
         else:
