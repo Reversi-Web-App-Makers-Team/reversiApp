@@ -6,20 +6,20 @@
 
 <p>
     {% if not valid_flag %}
-    その位置には石を置けません。もう一度番号を入力してください。
+    <font color="#ff4500">その場所には石を置けません。もう一度番号を入力してください。</font>
     {% endif %}
 
 <p> 白: {{ white_player }} </p>
 
 {% for facs in board_matrix %}
-    {% for fac in facs %}
-        {{ fac }}&nbsp;
+    |{% for fac in facs %}
+        {{ fac }}&nbsp;|
 {% endfor %}
 <br>
 {% endfor %}
 <p> 黒: {{ black_player }} </p>
 
-<p>置ける場所
+<p>置ける場所:
     {% for pos in putable_pos %}
     {{ pos }}&nbsp;
     {% endfor %}
