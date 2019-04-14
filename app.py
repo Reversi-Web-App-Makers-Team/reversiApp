@@ -38,9 +38,9 @@ def get_db():
 
 def init_db():
     db = get_db()
-    with app.open_resource('reversi.db', mode='r') as f:
-        db.cursor().executescript(f.read())
-    db.commit()
+    # with app.open_resource('reversi.db', mode='r') as f:
+    #     db.cursor().executescript(f.read())
+    # db.commit()
 
 
 @app.route('/')
@@ -104,7 +104,7 @@ def dqn(index=None):
             curs.execute(GET_NEXT_TURN)
             next_turn = curs.fetchone()[0]
             next_index = get_dqn_move(board_list_with_2, next_turn)
-            board_list_with_2, next_turn, winner = \
+            board_list_with_2, next_turn, winner, valid_flag = \
                 step(board_list_with_2, next_index, next_turn)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
             curs.execute(UPDATE_BOARD_INFO,
@@ -143,7 +143,7 @@ def dqn(index=None):
         curs.execute(GET_PLAYER_WHITE_NAME)
         white_player = curs.fetchone()[0]
         # put stone at index and update board (play player turn)
-        board_list_with_2, next_turn, winner = \
+        board_list_with_2, next_turn, winner, valid_flag = \
             step(board_list_with_2, index, next_turn)
         board_list_with_2_strings = intlist2strings(board_list_with_2)
         curs.execute(UPDATE_BOARD_INFO,
@@ -155,7 +155,7 @@ def dqn(index=None):
             if (next_turn == 1 and white_player == 'DQN') or \
                     (next_turn == -1 and black_player == 'DQN'):
                 next_index = get_dqn_move(board_list_with_2, next_turn)
-                board_list_with_2, next_turn, winner = \
+                board_list_with_2, next_turn, winner, valid_flag = \
                     step(board_list_with_2, next_index, next_turn)
                 board_list_with_2_strings = intlist2strings(board_list_with_2)
                 curs.execute(UPDATE_BOARD_INFO,
