@@ -6,6 +6,11 @@ username TEXT
 )
 '''
 
+# delete table for initialization
+DELETE_PLAYER_NAME_TABLE = '''
+DROP TABLE IF EXISTS player_name_table
+'''
+
 # methods to control player_name_table
 # white == 1
 REGISTER_PLAYER_WHITE_NAME = '''
@@ -38,6 +43,11 @@ CREATE TABLE IF NOT EXISTS board_info_table(
 board TEXT,
 next_turn INTEGER
 )
+'''
+
+# delete table for inilialization
+DELETE_BOARD_INFO_TABLE = '''
+DROP TABLE IF EXISTS board_info_table
 '''
 
 # methods to control board_info_table
