@@ -11,6 +11,8 @@ from reversiTools.web_app_reversi_tools import intlist2strings
 from reversiTools.web_app_reversi_tools import list2matrix
 from reversiTools.web_app_reversi_tools import step
 from reversiTools.web_app_reversi_tools import strings2intlist
+from reversiTools.web_app_reversi_tools import intlist2symbol_list
+from reversiTools.web_app_reversi_tools import inc_list
 
 from sqlite3_commands import CREATE_BOARD_INFO_TABLE
 from sqlite3_commands import CREATE_PLAYER_NAME_TABLE
@@ -110,7 +112,8 @@ def dqn(index=None):
                          )
 
         board_list, putable_pos = get_simple_board(board_list_with_2)
-        board_matrix = list2matrix(board_list)
+        symbol_list = intlist2symbol_list(board_list)
+        board_matrix = list2matrix(symbol_list)
         curs.execute(GET_PLAYER_BLACK_NAME)
         black_player = curs.fetchone()[0]
         curs.execute(GET_PLAYER_WHITE_NAME)
@@ -124,13 +127,13 @@ def dqn(index=None):
             black_player=black_player,
             white_player=white_player,
             board_matrix=board_matrix,
-            putable_pos=putable_pos,
+            putable_pos=inc_list(putable_pos),
             winner=winner
         )
 
     # player put stone (method=='get')
     else:
-        index = request.args["index"]
+        index = request.args["index"] - 1
         curs.execute(GET_BOARD_INFO)
         board_list_with_2 = strings2intlist(curs.fetchone()[0])
         curs.execute(GET_NEXT_TURN)
@@ -166,14 +169,15 @@ def dqn(index=None):
                 curs.close()
 
                 board_list, putable_pos = get_simple_board(board_list_with_2)
-                board_matrix = list2matrix(board_list)
+                symbol_list = intlist2symbol_list(board_list)
+                board_matrix = list2matrix(symbol_list)
 
                 return render_template(
                     'dqn.html',
                     black_player=black_player,
                     white_player=white_player,
                     board_matrix=board_matrix,
-                    putable_pos=putable_pos,
+                    putable_pos=inc_list(putable_pos),
                     winner=winner
                 )
 
