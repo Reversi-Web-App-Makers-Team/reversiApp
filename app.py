@@ -25,6 +25,8 @@ from sqlite3_commands import REGISTER_BOARD_INFO
 from sqlite3_commands import REGISTER_PLAYER_BLACK_NAME
 from sqlite3_commands import REGISTER_PLAYER_WHITE_NAME
 from sqlite3_commands import UPDATE_BOARD_INFO
+from sqlite3_commands import DELETE_PLAYER_NAME_TABLE
+from sqlite3_commands import DELETE_BOARD_INFO_TABLE
 
 app = Flask(__name__)
 
@@ -34,13 +36,6 @@ def get_db():
     if db is None:
         db = g._database = sqlite3.connect('reversi.db')
     return db
-
-
-def init_db():
-    db = get_db()
-    # with app.open_resource('reversi.db', mode='r') as f:
-    #     db.cursor().executescript(f.read())
-    # db.commit()
 
 
 @app.route('/')
@@ -55,9 +50,12 @@ def home():
 
 @app.route('/mode_select', methods=['POST'])
 def mode_select():
-    init_db()
     db = get_db()
     curs = db.cursor()
+
+    # initialize table
+    curs.execute(DELETE_BOARD_INFO_TABLE)
+    curs.execute(DELETE_PLAYER_NAME_TABLE)
 
     username = request.form["username"]
     board_list_with_2, player_color = get_initial_status()
