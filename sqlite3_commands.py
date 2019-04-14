@@ -53,8 +53,8 @@ DROP TABLE IF EXISTS board_info_table
 
 # methods to control board_info_table
 REGISTER_BOARD_INFO = '''
-INSERT INTO board_info_table(board, next_turn)
-VALUES(?, ?)
+INSERT INTO board_info_table(board, next_turn, winner)
+VALUES(?, ?, 0)
 '''
 
 GET_BOARD_INFO = '''
@@ -63,17 +63,13 @@ SELECT board FROM board_info_table
 
 UPDATE_BOARD_INFO = '''
 UPDATE board_info_table
-SET board = ?, next_turn = ?
+SET board = ?, next_turn = ?, winner = ?
 '''
 
 GET_NEXT_TURN = '''
 SELECT next_turn FROM board_info_table
 '''
 
-REGISTER_WINNER = '''
-INSERT INTO board_info_table(winner)
-VALUES(?)
-'''
 
 GET_WINNER = '''
 SELECT winner FROM board_info_table

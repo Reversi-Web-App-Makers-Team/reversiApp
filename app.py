@@ -27,7 +27,6 @@ from sqlite3_commands import REGISTER_PLAYER_WHITE_NAME
 from sqlite3_commands import UPDATE_BOARD_INFO
 from sqlite3_commands import DELETE_PLAYER_NAME_TABLE
 from sqlite3_commands import DELETE_BOARD_INFO_TABLE
-from sqlite3_commands import REFISTER_WINNER
 from sqlite3_commands import GET_WINNER
 
 app = Flask(__name__)
@@ -109,7 +108,7 @@ def dqn(index=None):
                 step(board_list_with_2, next_index, next_turn)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
             curs.execute(UPDATE_BOARD_INFO,
-                         (board_list_with_2_strings, next_turn)
+                         (board_list_with_2_strings, next_turn, winner)
                          )
 
         board_list, putable_pos = get_simple_board(board_list_with_2)
@@ -152,11 +151,26 @@ def dqn(index=None):
         board_list_with_2, next_turn, winner, valid_flag = \
             step(board_list_with_2, index, next_turn)
         if winner != 0:
-            curs.execute(REGISTER_WINNER, (winner,))
+            board_list, putable_pos = get_simple_board(board_list_with_2)
+            symbol_list = intlist2symbol_list(board_list)
+            board_matrix = list2matrix(symbol_list)
+            board_list_with_2_strings = intlist2strings(board_list_with_2)
+            curs.execute(UPDATE_BOARD_INFO, (board_list_with_2_strings, next_turn, winner))
+            db.commit()
+            curs.close()
+            return render_template(
+                'dqn.html',
+                black_player=black_player,
+                white_player=white_player,
+                board_matrix=board_matrix,
+                putable_pos=inc_list(putable_pos),
+                winner=winner,
+                valid_flag=valid_flag
+            )
 
         board_list_with_2_strings = intlist2strings(board_list_with_2)
         curs.execute(UPDATE_BOARD_INFO,
-                     (board_list_with_2_strings, next_turn)
+                     (board_list_with_2_strings, next_turn, winner)
                      )
 
         while True:
@@ -167,12 +181,26 @@ def dqn(index=None):
                 board_list_with_2, next_turn, winner, valid_flag = \
                     step(board_list_with_2, next_index, next_turn)
                 if winner != 0:
-                    curs.execute(REGISTER_WINNER, (winner,))
+                    board_list, putable_pos = get_simple_board(board_list_with_2)
+                    symbol_list = intlist2symbol_list(board_list)
+                    board_matrix = list2matrix(symbol_list)
+                    board_list_with_2_strings = intlist2strings(board_list_with_2)
+                    curs.execute(UPDATE_BOARD_INFO, (board_list_with_2_strings, next_turn, winner))
+                    db.commit()
+                    curs.close()
+                    return render_template(
+                        'dqn.html',
+                        black_player=black_player,
+                        white_player=white_player,
+                        board_matrix=board_matrix,
+                        putable_pos=inc_list(putable_pos),
+                        winner=winner,
+                        valid_flag=valid_flag
+                    )
                 board_list_with_2_strings = intlist2strings(board_list_with_2)
                 curs.execute(UPDATE_BOARD_INFO,
-                             (board_list_with_2_strings, next_turn)
+                             (board_list_with_2_strings, next_turn, winner)
                              )
-                #TODO -> nishimoto: make case if game finishes with dqn move.
 
             # it's player's turn (ask put index again)
             else:
@@ -199,7 +227,7 @@ def fin():
     db = get_db()
     curs = db.cursor()
     curs.execute(GET_WINNER)
-    winner = int(curs.fetchone()[0])
+    winner = curs.fetchone()[0]
     if winner == 1:
         curs.execute(GET_PLAYER_WHITE_NAME)
         name = curs.fetchone()[0]
@@ -213,11 +241,12 @@ def fin():
     return render_template(
             'fin.html',
             winner=winner,
-            name=name)
+            name=name
+    )
 
 
 def _main():
-    app.run(debug=True, host='0.0.0.0'))
+    app.run(debug=True, host='0.0.0.0')
 
 
 if __name__ == '__main__':
