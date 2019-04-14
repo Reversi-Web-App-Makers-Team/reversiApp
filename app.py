@@ -36,13 +36,12 @@ def get_db():
     return db
 
 
-'''
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
-'''
+def init_db():
+    db = get_db()
+    with app.open_resource('reversi.db', mode='r') as f:
+        db.cursor().executescript(f.read())
+    db.commit()
+
 
 @app.route('/')
 def index():
@@ -56,6 +55,7 @@ def home():
 
 @app.route('/mode_select', methods=['POST'])
 def mode_select():
+    init_db()
     db = get_db()
     curs = db.cursor()
 
