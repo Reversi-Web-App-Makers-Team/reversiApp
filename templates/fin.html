@@ -3,7 +3,10 @@
 <body>
 
 <h1>Reversi Web App</h1>
-<p>{{ winner }}の勝ちやで！！</p>
+{% if winner == 2 %}
+<p>引き分けやで！！</p>
+{% else %}
+<p>{{ name }}の勝ちやで！！</p>
 
 <input onclick="location.href='/home'" type="button" value="もう一度">
 </form>

@@ -41,7 +41,8 @@ SELECT color FROM player_name_table LIMIT 1
 CREATE_BOARD_INFO_TABLE = '''
 CREATE TABLE IF NOT EXISTS board_info_table(
 board TEXT,
-next_turn INTEGER
+next_turn INTEGER,
+winner INTEGER
 )
 '''
 
@@ -67,4 +68,13 @@ SET board = ?, next_turn = ?
 
 GET_NEXT_TURN = '''
 SELECT next_turn FROM board_info_table
+'''
+
+REGISTER_WINNER = '''
+INSERT INTO board_info_table(winner)
+VALUES(?)
+'''
+
+GET_WINNER = '''
+SELECT winner FROM board_info_table
 '''

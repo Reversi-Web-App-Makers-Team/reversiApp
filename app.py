@@ -27,6 +27,8 @@ from sqlite3_commands import REGISTER_PLAYER_WHITE_NAME
 from sqlite3_commands import UPDATE_BOARD_INFO
 from sqlite3_commands import DELETE_PLAYER_NAME_TABLE
 from sqlite3_commands import DELETE_BOARD_INFO_TABLE
+from sqlite3_commands import REFISTER_WINNER
+from sqlite3_commands import GET_WINNER
 
 app = Flask(__name__)
 
@@ -146,8 +148,12 @@ def dqn(index=None):
             index = 1218
         else:
             index = int(request.args["index"]) - 1
+
         board_list_with_2, next_turn, winner, valid_flag = \
             step(board_list_with_2, index, next_turn)
+        if winner != 0:
+            curs.execute(REGISTER_WINNER, (winner,))
+
         board_list_with_2_strings = intlist2strings(board_list_with_2)
         curs.execute(UPDATE_BOARD_INFO,
                      (board_list_with_2_strings, next_turn)
@@ -160,6 +166,8 @@ def dqn(index=None):
                 next_index = get_dqn_move(board_list_with_2, next_turn)
                 board_list_with_2, next_turn, winner, valid_flag = \
                     step(board_list_with_2, next_index, next_turn)
+                if winner != 0:
+                    curs.execute(REGISTER_WINNER, (winner,))
                 board_list_with_2_strings = intlist2strings(board_list_with_2)
                 curs.execute(UPDATE_BOARD_INFO,
                              (board_list_with_2_strings, next_turn)
@@ -188,12 +196,28 @@ def dqn(index=None):
 
 @app.route('/fin', methods=['POST'])
 def fin():
-    winner = request.form["winner"]
-    return render_template('fin.html', winner=winner)
+    db = get_db()
+    curs = db.cursor()
+    curs.execute(GET_WINNER)
+    winner = int(curs.fetchone()[0])
+    if winner == 1:
+        curs.execute(GET_PLAYER_WHITE_NAME)
+        name = curs.fetchone()[0]
+    elif winner == -1:
+        curs.execute(GET_PLAYER_BLACK_NAME)
+        name = curs.fetchone()[0]
+    else:
+        name = None
+    db.commit()
+    curs.close()
+    return render_template(
+            'fin.html',
+            winner=winner,
+            name=name)
 
 
 def _main():
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0'))
 
 
 if __name__ == '__main__':
