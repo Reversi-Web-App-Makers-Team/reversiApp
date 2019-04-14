@@ -7,12 +7,12 @@ from flask import request
 from reversiTools.web_app_reversi_tools import get_dqn_move
 from reversiTools.web_app_reversi_tools import get_initial_status
 from reversiTools.web_app_reversi_tools import get_simple_board
+from reversiTools.web_app_reversi_tools import inc_list
 from reversiTools.web_app_reversi_tools import intlist2strings
+from reversiTools.web_app_reversi_tools import intlist2symbol_list
 from reversiTools.web_app_reversi_tools import list2matrix
 from reversiTools.web_app_reversi_tools import step
 from reversiTools.web_app_reversi_tools import strings2intlist
-from reversiTools.web_app_reversi_tools import intlist2symbol_list
-from reversiTools.web_app_reversi_tools import inc_list
 
 from sqlite3_commands import CREATE_BOARD_INFO_TABLE
 from sqlite3_commands import CREATE_PLAYER_NAME_TABLE
@@ -133,7 +133,7 @@ def dqn(index=None):
 
     # player put stone (method=='get')
     else:
-        index = request.args["index"] - 1
+        index = int(request.args["index"]) - 1
         curs.execute(GET_BOARD_INFO)
         board_list_with_2 = strings2intlist(curs.fetchone()[0])
         curs.execute(GET_NEXT_TURN)
