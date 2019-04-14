@@ -38,6 +38,16 @@ def get_db():
     return db
 
 
+<<<<<<< HEAD
+=======
+def init_db():
+    db = get_db()
+    with app.open_resource('reversi.db', mode='r') as f:
+        db.cursor().executescript(f.read())
+    db.commit()
+
+
+>>>>>>> 9745ea26e0abd14a11ee0a2fa393ffd113250312
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -50,6 +60,10 @@ def home():
 
 @app.route('/mode_select', methods=['POST'])
 def mode_select():
+<<<<<<< HEAD
+=======
+    # init_db()
+>>>>>>> 9745ea26e0abd14a11ee0a2fa393ffd113250312
     db = get_db()
     curs = db.cursor()
 
