@@ -4,6 +4,11 @@
 
 <h1>Reversi Web App</h1>
 
+<p>
+    {% if not valid_flag %}
+    その位置には石を置けません。もう一度番号を入力してください。
+    {% endif %}
+
 <p> 白: {{ white_player }} </p>
 
 {% for facs in board_matrix %}

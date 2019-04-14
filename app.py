@@ -128,12 +128,12 @@ def dqn(index=None):
             white_player=white_player,
             board_matrix=board_matrix,
             putable_pos=inc_list(putable_pos),
-            winner=winner
+            winner=winner,
+            valid_flag=valid_flag
         )
 
     # player put stone (method=='get')
     else:
-        index = int(request.args["index"]) - 1
         curs.execute(GET_BOARD_INFO)
         board_list_with_2 = strings2intlist(curs.fetchone()[0])
         curs.execute(GET_NEXT_TURN)
@@ -143,6 +143,10 @@ def dqn(index=None):
         curs.execute(GET_PLAYER_WHITE_NAME)
         white_player = curs.fetchone()[0]
         # put stone at index and update board (play player turn)
+        if not request.args["index"]:
+            index = 1218
+        else:
+            index = int(request.args["index"]) - 1
         board_list_with_2, next_turn, winner, valid_flag = \
             step(board_list_with_2, index, next_turn)
         board_list_with_2_strings = intlist2strings(board_list_with_2)
@@ -178,7 +182,8 @@ def dqn(index=None):
                     white_player=white_player,
                     board_matrix=board_matrix,
                     putable_pos=inc_list(putable_pos),
-                    winner=winner
+                    winner=winner,
+                    valid_flag=valid_flag
                 )
 
 
