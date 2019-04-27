@@ -78,8 +78,8 @@ def mode_select():
     return render_template('mode_select.html')
 
 
-@app.route('/game/dqn', methods=['POST'])
-@app.route('/game/dqn/<index>', methods=['GET'])
+@app.route('/play', methods=['POST'])
+@app.route('/play/<index>', methods=['GET'])
 def dqn(index=None):
     db = get_db()
     curs = db.cursor()
@@ -123,7 +123,7 @@ def dqn(index=None):
         curs.close()
 
         return render_template(
-            'dqn.html',
+            'play.html',
             black_player=black_player,
             white_player=white_player,
             board_matrix=board_matrix,
@@ -159,7 +159,7 @@ def dqn(index=None):
             db.commit()
             curs.close()
             return render_template(
-                'dqn.html',
+                'play.html',
                 black_player=black_player,
                 white_player=white_player,
                 board_matrix=board_matrix,
@@ -189,7 +189,7 @@ def dqn(index=None):
                     db.commit()
                     curs.close()
                     return render_template(
-                        'dqn.html',
+                        'play.html',
                         black_player=black_player,
                         white_player=white_player,
                         board_matrix=board_matrix,
@@ -212,7 +212,7 @@ def dqn(index=None):
                 board_matrix = list2matrix(symbol_list)
 
                 return render_template(
-                    'dqn.html',
+                    'play.html',
                     black_player=black_player,
                     white_player=white_player,
                     board_matrix=board_matrix,
