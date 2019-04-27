@@ -12,15 +12,14 @@
 
 <p>
 <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=30 height=30>
-    {{ black_player }} : 先攻
+先攻 {{ black_player }} : 石の数 {{ black_stone_num }}
 </p>
 
 <p>
 <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=30 height=30>
-    {{ white_player }} : 後攻
+後攻 {{ white_player }} : 石の数 {{ white_stone_num }}
 </p>
 
-{{ board_matrix }}
 {% for stones in board_matrix %}
     {% for stone in stones %}
         {% if stone == 1 %}
