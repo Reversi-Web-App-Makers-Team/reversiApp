@@ -23,6 +23,10 @@ GET_PLAYER_WHITE_NAME = '''
 SELECT username FROM player_name_table WHERE color == 1
 '''
 
+GET_AGENT_NAME = '''
+SELECT username FROM player_name_table WHERE agent == 'agent'
+'''
+
 # black == -1
 REGISTER_PLAYER_BLACK_NAME = '''
 INSERT INTO player_name_table(color, username, agent)

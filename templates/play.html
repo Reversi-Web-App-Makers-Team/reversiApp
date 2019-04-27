@@ -1,33 +1,48 @@
 <!DOCTYPE html>
 <html>
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='../static/css/style.css') }}">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='../static/css/style.css') }}">
 <body>
 <h1>Reversi Web App</h1>
 
 <p>
     {% if not valid_flag %}
-    <font color="#ff4500">その場所には石を置けません。もう一度番号を入力してください。</font>
+        <font color="#ff4500">その場所には石を置けません。もう一度番号を入力してください。</font>
     {% endif %}
+</p>
 
-<p> 白: {{ white_player }} </p>
+<p>
+<img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=30 height=30>
+先攻 {{ black_player }} : 石の数 {{ black_stone_num }}
+</p>
 
-{% for facs in board_matrix %}
-    |{% for fac in facs %}
-        {{ fac }}&nbsp;|
+<p>
+<img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=30 height=30>
+後攻 {{ white_player }} : 石の数 {{ white_stone_num }}
+</p>
+
+{% for stones in board_matrix %}
+    {% for stone in stones %}
+        {% if stone == 1 %}
+        <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=60 height=60>
+        {% elif stone == -1 %}
+        <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=60 height=60>
+        {% elif stone == 2 %}
+        <img src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=60 height=60>
+        {% else %}
+        <img src="{{ url_for('static', filename='../static/images/blank.png') }}" width=60 height=60>
+        {% endif %}
+    {% endfor %}<br>
 {% endfor %}
-<br>
-{% endfor %}
-<p> 黒: {{ black_player }} </p>
 
 <p>置ける場所:
     {% for pos in putable_pos %}
-    {{ pos }}&nbsp;
+        {{ pos }}
     {% endfor %}
 </p>
 
 <p>
 {% if winner == 0 %}
-<form action="/game/dqn/<index>" method="get">
+<form action="/play/<index>" method="get">
 置く場所の番号を入力して下さい:
 <p><input name="index" type="number"/ ></p>
 <p><input type="submit" value="置く" href="#" class="btn-square"></p>

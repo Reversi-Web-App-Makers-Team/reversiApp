@@ -1,16 +1,31 @@
-@charset "UTF-8";
-.btn-square {
-  display: inline-block;
-  padding: 1.5em 3em;
-  text-decoration: none;
-  background: #668ad8;/*ボタン色*/
-  color: #FFF;
-  border-bottom: solid 4px #627295;
-  border-radius: 3px;
+/* ジャンボトロンサイズ拡大のクラス */
+.jumbotron-extend {
+    position: relative;
+    height: 100vh;
+    min-height: 300px;
+    background: url(../images/reversi_index.jpg) no-repeat center center;
+    background-size: cover;
 }
-.btn-square:active {
-  /*ボタンを押したとき*/
-  -webkit-transform: translateY(4px);
-  transform: translateY(4px);/*下に動く*/
-  border-bottom: none;/*線を消す*/
+
+.jumbotron-container {
+    position: relative;
+    top: 30%;
+    transform: translateY(-50%);
+}
+
+.site-name {
+    margin-bottom: 40px;
+    font-family: 'Playfair Display', serif;
+}
+
+.sns-button {
+    position: absolute;
+    bottom: 10px;
+    left: 46px;
+}
+
+.to-circle {
+    width:  100px;       /* ※縦横を同値に */
+    height: 100px;       /* ※縦横を同値に */
+    border-radius: 50%;  /* 角丸半径を50%にする(=円形にする) */
 }
