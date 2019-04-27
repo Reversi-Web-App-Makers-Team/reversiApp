@@ -9,7 +9,7 @@ from reversiTools.web_app_reversi_tools import get_initial_status
 from reversiTools.web_app_reversi_tools import get_simple_board
 from reversiTools.web_app_reversi_tools import inc_list
 from reversiTools.web_app_reversi_tools import intlist2strings
-from reversiTools.web_app_reversi_tools import intlist2symbol_list
+# from reversiTools.web_app_reversi_tools import intlist2symbol_list
 from reversiTools.web_app_reversi_tools import list2matrix
 from reversiTools.web_app_reversi_tools import step
 from reversiTools.web_app_reversi_tools import strings2intlist
@@ -106,14 +106,18 @@ def dqn(index=None):
             next_index = get_dqn_move(board_list_with_2, next_turn)
             board_list_with_2, next_turn, winner, valid_flag = \
                 step(board_list_with_2, next_index, next_turn)
+            print(board_list_with_2)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
             curs.execute(UPDATE_BOARD_INFO,
                          (board_list_with_2_strings, next_turn, winner)
                          )
 
-        board_list, putable_pos = get_simple_board(board_list_with_2)
-        symbol_list = intlist2symbol_list(board_list)
-        board_matrix = list2matrix(symbol_list)
+        # board_list, putable_pos = get_simple_board(board_list_with_2)
+        _, putable_pos = get_simple_board(board_list_with_2)
+        # symbol_list = intlist2symbol_list(board_list)
+        # board_matrix = list2matrix(symbol_list)
+        print(board_list_with2)
+        board_matrix = list2matrix(board_list_with_2)
         curs.execute(GET_PLAYER_BLACK_NAME)
         black_player = curs.fetchone()[0]
         curs.execute(GET_PLAYER_WHITE_NAME)
@@ -151,9 +155,11 @@ def dqn(index=None):
         board_list_with_2, next_turn, winner, valid_flag = \
             step(board_list_with_2, index, next_turn)
         if winner != 0:
-            board_list, putable_pos = get_simple_board(board_list_with_2)
-            symbol_list = intlist2symbol_list(board_list)
-            board_matrix = list2matrix(symbol_list)
+            # board_list, putable_pos = get_simple_board(board_list_with_2)
+            _, putable_pos = get_simple_board(board_list_with_2)
+            # symbol_list = intlist2symbol_list(board_list)
+            # board_matrix = list2matrix(symbol_list)
+            board_matrix = list2matrix(board_list_with_2)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
             curs.execute(UPDATE_BOARD_INFO, (board_list_with_2_strings, next_turn, winner))
             db.commit()
@@ -181,9 +187,11 @@ def dqn(index=None):
                 board_list_with_2, next_turn, winner, valid_flag = \
                     step(board_list_with_2, next_index, next_turn)
                 if winner != 0:
-                    board_list, putable_pos = get_simple_board(board_list_with_2)
-                    symbol_list = intlist2symbol_list(board_list)
-                    board_matrix = list2matrix(symbol_list)
+                    # board_list, putable_pos = get_simple_board(board_list_with_2)
+                    _, putable_pos = get_simple_board(board_list_with_2)
+                    # symbol_list = intlist2symbol_list(board_list)
+                    # board_matrix = list2matrix(symbol_list)
+                    board_matrix = list2matrix(board_list_with_2)
                     board_list_with_2_strings = intlist2strings(board_list_with_2)
                     curs.execute(UPDATE_BOARD_INFO, (board_list_with_2_strings, next_turn, winner))
                     db.commit()
@@ -207,9 +215,11 @@ def dqn(index=None):
                 db.commit()
                 curs.close()
 
-                board_list, putable_pos = get_simple_board(board_list_with_2)
-                symbol_list = intlist2symbol_list(board_list)
-                board_matrix = list2matrix(symbol_list)
+                # board_list, putable_pos = get_simple_board(board_list_with_2)
+                _, putable_pos = get_simple_board(board_list_with_2)
+                # symbol_list = intlist2symbol_list(board_list)
+                # board_matrix = list2matrix(symbol_list)
+                board_matrix = list2matrix(board_list_with_2)
 
                 return render_template(
                     'dqn.html',
