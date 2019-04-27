@@ -65,9 +65,9 @@ def mode_select():
     curs.execute(CREATE_PLAYER_NAME_TABLE)
 
     if player_color == 1:
-        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username,))
+        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username,"human"))
     else:
-        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username,))
+        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username,"human"))
 
     curs.execute(CREATE_BOARD_INFO_TABLE)
     curs.execute(REGISTER_BOARD_INFO, (board_list_with_2_strings, -1))
@@ -80,26 +80,27 @@ def mode_select():
 
 @app.route('/play', methods=['POST'])
 @app.route('/play/<index>', methods=['GET'])
-def dqn(index=None):
+def play(index=None):
     db = get_db()
     curs = db.cursor()
-
+    
     # initialize game
     if request.method == 'POST':
+        agent_name = request.form["agent_name"]
         curs.execute(GET_PLAYER_COLOR)
-        dqn_color = -1 * curs.fetchone()[0]
+        agent_color = -1 * curs.fetchone()[0]
         curs.execute(GET_BOARD_INFO)
         board_list_with_2 = strings2intlist(curs.fetchone()[0])
 
         # player is black player (player plays first turn)
-        if dqn_color == 1:
-            curs.execute(REGISTER_PLAYER_WHITE_NAME, ('DQN',))
+        if agent_color == 1:
+            curs.execute(REGISTER_PLAYER_WHITE_NAME, (agent_name, 'agent'))
             winner = 0
             valid_flag = True
 
-        # dqn is black player (dqn plays first turn)
+        # agent is black player (agent plays first turn)
         else:
-            curs.execute(REGISTER_PLAYER_BLACK_NAME, ('DQN',))
+            curs.execute(REGISTER_PLAYER_BLACK_NAME, (agent_name,'agent'))
             # play first turn
             curs.execute(GET_NEXT_TURN)
             next_turn = curs.fetchone()[0]
@@ -175,8 +176,8 @@ def dqn(index=None):
 
         while True:
             # it's DQN turn
-            if (next_turn == 1 and white_player == 'DQN') or \
-                    (next_turn == -1 and black_player == 'DQN'):
+            if (next_turn == 1 and white_player == agent_name) or \
+                    (next_turn == -1 and black_player == agent_name):
                 next_index = get_dqn_move(board_list_with_2, next_turn)
                 board_list_with_2, next_turn, winner, valid_flag = \
                     step(board_list_with_2, next_index, next_turn)
