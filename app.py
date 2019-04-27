@@ -4,15 +4,15 @@ from flask import Flask
 from flask import g
 from flask import render_template
 from flask import request
-from reversiTools.web_app_reversi_tools import get_dqn_move
+from reversiTools.web_app_reversi_tools import get_cp_move
 from reversiTools.web_app_reversi_tools import get_initial_status
 from reversiTools.web_app_reversi_tools import get_simple_board
 from reversiTools.web_app_reversi_tools import inc_list
 from reversiTools.web_app_reversi_tools import intlist2strings
-from reversiTools.web_app_reversi_tools import intlist2symbol_list
 from reversiTools.web_app_reversi_tools import list2matrix
 from reversiTools.web_app_reversi_tools import step
 from reversiTools.web_app_reversi_tools import strings2intlist
+from reversiTools.web_app_reversi_tools import count_stone
 
 from sqlite3_commands import CREATE_BOARD_INFO_TABLE
 from sqlite3_commands import CREATE_PLAYER_NAME_TABLE
@@ -103,27 +103,29 @@ def dqn(index=None):
             # play first turn
             curs.execute(GET_NEXT_TURN)
             next_turn = curs.fetchone()[0]
-            next_index = get_dqn_move(board_list_with_2, next_turn)
+            next_index = get_cp_move(board_list_with_2, next_turn, 'DQN')
             board_list_with_2, next_turn, winner, valid_flag = \
                 step(board_list_with_2, next_index, next_turn)
+            print(board_list_with_2)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
             curs.execute(UPDATE_BOARD_INFO,
                          (board_list_with_2_strings, next_turn, winner)
                          )
 
-        board_list, putable_pos = get_simple_board(board_list_with_2)
-        symbol_list = intlist2symbol_list(board_list)
-        board_matrix = list2matrix(symbol_list)
+        _, putable_pos = get_simple_board(board_list_with_2)
+        board_matrix = list2matrix(board_list_with_2)
         curs.execute(GET_PLAYER_BLACK_NAME)
         black_player = curs.fetchone()[0]
         curs.execute(GET_PLAYER_WHITE_NAME)
         white_player = curs.fetchone()[0]
-
         db.commit()
         curs.close()
+        white_stone_num, black_stone_num = count_stone(board_list_with_2)
 
         return render_template(
             'dqn.html',
+            white_stone_num=white_stone_num,
+            black_stone_num=black_stone_num,
             black_player=black_player,
             white_player=white_player,
             board_matrix=board_matrix,
@@ -151,15 +153,18 @@ def dqn(index=None):
         board_list_with_2, next_turn, winner, valid_flag = \
             step(board_list_with_2, index, next_turn)
         if winner != 0:
-            board_list, putable_pos = get_simple_board(board_list_with_2)
-            symbol_list = intlist2symbol_list(board_list)
-            board_matrix = list2matrix(symbol_list)
+            _, putable_pos = get_simple_board(board_list_with_2)
+            board_matrix = list2matrix(board_list_with_2)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
             curs.execute(UPDATE_BOARD_INFO, (board_list_with_2_strings, next_turn, winner))
             db.commit()
             curs.close()
+            white_stone_num, black_stone_num = count_stone(board_list_with_2)
+
             return render_template(
                 'dqn.html',
+                white_stone_num=white_stone_num,
+                black_stone_num=black_stone_num,
                 black_player=black_player,
                 white_player=white_player,
                 board_matrix=board_matrix,
@@ -177,19 +182,23 @@ def dqn(index=None):
             # it's DQN turn
             if (next_turn == 1 and white_player == 'DQN') or \
                     (next_turn == -1 and black_player == 'DQN'):
-                next_index = get_dqn_move(board_list_with_2, next_turn)
+                next_index = get_cp_move(board_list_with_2, next_turn, 'DQN')
                 board_list_with_2, next_turn, winner, valid_flag = \
                     step(board_list_with_2, next_index, next_turn)
+
                 if winner != 0:
-                    board_list, putable_pos = get_simple_board(board_list_with_2)
-                    symbol_list = intlist2symbol_list(board_list)
-                    board_matrix = list2matrix(symbol_list)
+                    _, putable_pos = get_simple_board(board_list_with_2)
+                    board_matrix = list2matrix(board_list_with_2)
                     board_list_with_2_strings = intlist2strings(board_list_with_2)
                     curs.execute(UPDATE_BOARD_INFO, (board_list_with_2_strings, next_turn, winner))
                     db.commit()
                     curs.close()
+                    white_stone_num, black_stone_num = count_stone(board_list_with_2)
+
                     return render_template(
                         'dqn.html',
+                        white_stone_num=white_stone_num,
+                        black_stone_num=black_stone_num,
                         black_player=black_player,
                         white_player=white_player,
                         board_matrix=board_matrix,
@@ -207,12 +216,14 @@ def dqn(index=None):
                 db.commit()
                 curs.close()
 
-                board_list, putable_pos = get_simple_board(board_list_with_2)
-                symbol_list = intlist2symbol_list(board_list)
-                board_matrix = list2matrix(symbol_list)
+                _, putable_pos = get_simple_board(board_list_with_2)
+                board_matrix = list2matrix(board_list_with_2)
+                white_stone_num, black_stone_num = count_stone(board_list_with_2)
 
                 return render_template(
                     'dqn.html',
+                    white_stone_num=white_stone_num,
+                    black_stone_num=black_stone_num,
                     black_player=black_player,
                     white_player=white_player,
                     board_matrix=board_matrix,
