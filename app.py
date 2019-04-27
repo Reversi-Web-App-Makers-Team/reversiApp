@@ -60,6 +60,8 @@ def mode_select():
     curs.execute(DELETE_PLAYER_NAME_TABLE)
 
     username = request.form["username"]
+    if not username:
+        username = " "
     board_list_with_2, player_color = get_initial_status()
     board_list_with_2_strings = intlist2strings(board_list_with_2)
 
@@ -91,9 +93,9 @@ def play(index=None):
 
         # modeとagentの対応づけ
         translate_dict = {
-                "弱い" : 'RANDOM',
-                "普通" : 'DQN',
-                "強い" : 'SL'
+                "Easy" : 'RANDOM',
+                "Normal" : 'DQN',
+                "Hard" : 'SL'
                 }
 
         agent_name = translate_dict[mode]
@@ -169,6 +171,7 @@ def play(index=None):
         board_list_with_2, next_turn, winner, valid_flag = \
             step(board_list_with_2, index, next_turn)
         if winner != 0:
+            print(winner, 1)
             _, putable_pos = get_simple_board(board_list_with_2)
             board_matrix = list2matrix(board_list_with_2)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
@@ -203,6 +206,7 @@ def play(index=None):
                     step(board_list_with_2, next_index, next_turn)
 
                 if winner != 0:
+                    print(winner, 2)
                     _, putable_pos = get_simple_board(board_list_with_2)
                     board_matrix = list2matrix(board_list_with_2)
                     board_list_with_2_strings = intlist2strings(board_list_with_2)
@@ -265,6 +269,7 @@ def fin():
         name = None
     db.commit()
     curs.close()
+    print(winner)
     return render_template(
             'fin.html',
             winner=winner,

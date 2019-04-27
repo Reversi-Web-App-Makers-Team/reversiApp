@@ -1,20 +1,34 @@
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" type="text/css" href="../static/css/style.css">
+
+<head>
+    <title>Reversi Web App</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css">
+</head>
+
 <body>
 
-<h1>Reversi Web App</h1>
-<h2>対戦相手を選んでください</h2>
 
-<form action="/play" method="post">
-    <input name="mode" type="submit" value="弱い" class="btn-square"> <br>
-    説明:HogeHoge
-    <input name="mode" type="submit" value="普通" class="btn-square"> <br>
-    説明:HogeHoge
-    <input name="mode" type="submit" value="強い" class="btn-square"> 
-    説明:HogeHoge
-<br></form>
+    <!-- jumbotron -->
+    <div class="jumbotron jumbotron-extend">
+        <div class="container-fluid jumbotron-container">
 
+            <h1 class="site-name"><font color="white">Choose a match mode
+</h2>
+
+        <form action="/play" method="post">
+            <input name="mode" type="submit" value="Easy" class="btn btn-dark btn-lg"/> 
+            <input name="mode" type="submit" value="Normal" class="btn btn-dark btn-lg"/>
+            <input name="mode" type="submit" value="Hard" class="btn btn-dark btn-lg"/> 
+        <br></form>
+
+
+        </div>
+    </div>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="../static/js/bootstrap.min.js"></script>
 </body>
 </html>
 
