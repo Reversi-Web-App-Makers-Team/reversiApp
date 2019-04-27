@@ -59,18 +59,18 @@ def mode_select():
     curs.execute(DELETE_BOARD_INFO_TABLE)
     curs.execute(DELETE_PLAYER_NAME_TABLE)
 
-    username = request.form["username"]
+    username = request.form['username']
     if not username:
-        username = " "
+        username = ' '
     board_list_with_2, player_color = get_initial_status()
     board_list_with_2_strings = intlist2strings(board_list_with_2)
 
     curs.execute(CREATE_PLAYER_NAME_TABLE)
 
     if player_color == 1:
-        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username,"human"))
+        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username,'human'))
     else:
-        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username,"human"))
+        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username,'human'))
 
     curs.execute(CREATE_BOARD_INFO_TABLE)
     curs.execute(REGISTER_BOARD_INFO, (board_list_with_2_strings, -1))
@@ -89,13 +89,13 @@ def play(index=None):
     
     # initialize game
     if request.method == 'POST':
-        mode = request.form["mode"]
+        mode = request.form['mode']
 
-        # modeとagentの対応づけ
+        # connect  model with agent
         translate_dict = {
-                "Easy" : 'RANDOM',
-                "Normal" : 'DQN',
-                "Hard" : 'SL'
+                'Easy' : 'RANDOM',
+                'Normal' : 'DQN',
+                'Hard' : 'SL'
                 }
 
         agent_name = translate_dict[mode]
@@ -163,15 +163,15 @@ def play(index=None):
         agent_name = curs.fetchone()[0]
 
         # put stone at index and update board (play player turn)
-        if not request.args["index"]:
+        if not request.args['index']:
+            # Developer's birthdate'
             index = 1218
         else:
-            index = int(request.args["index"]) - 1
+            index = int(request.args['index']) - 1
 
         board_list_with_2, next_turn, winner, valid_flag = \
             step(board_list_with_2, index, next_turn)
         if winner != 0:
-            print(winner, 1)
             _, putable_pos = get_simple_board(board_list_with_2)
             board_matrix = list2matrix(board_list_with_2)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
@@ -206,7 +206,6 @@ def play(index=None):
                     step(board_list_with_2, next_index, next_turn)
 
                 if winner != 0:
-                    print(winner, 2)
                     _, putable_pos = get_simple_board(board_list_with_2)
                     board_matrix = list2matrix(board_list_with_2)
                     board_list_with_2_strings = intlist2strings(board_list_with_2)
@@ -269,7 +268,6 @@ def fin():
         name = None
     db.commit()
     curs.close()
-    print(winner)
     return render_template(
             'fin.html',
             winner=winner,
