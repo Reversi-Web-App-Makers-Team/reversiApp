@@ -37,7 +37,7 @@
 
         {% elif stone == 2 %}
         {% set index = outer_loop.index0*8 + loop.index0 + 1 %}
-        <form action="/game/dqn/<index>" method="get" style="display: inline">
+        <form action="/play/<index>" method="get" style="display: inline">
             <button type="submit" name="index" value="{{index}}" ><img src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=45 height=54></button>
         </form>
 
