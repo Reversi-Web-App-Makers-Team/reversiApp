@@ -1,8 +1,9 @@
-# create table reserving set info (stone_color, player_name)
+# create table reserving set info (stone_color, player_name, agent)
 CREATE_PLAYER_NAME_TABLE = '''
 CREATE TABLE IF NOT EXISTS player_name_table(
 color INTEGER,
-username TEXT
+username TEXT,
+agent TEXT
 )
 '''
 
@@ -14,18 +15,22 @@ DROP TABLE IF EXISTS player_name_table
 # methods to control player_name_table
 # white == 1
 REGISTER_PLAYER_WHITE_NAME = '''
-INSERT INTO player_name_table(color, username)
-VALUES(1, ?)
+INSERT INTO player_name_table(color, username, agent)
+VALUES(1, ?, ?)
 '''
 
 GET_PLAYER_WHITE_NAME = '''
 SELECT username FROM player_name_table WHERE color == 1
 '''
 
+GET_AGENT_NAME = '''
+SELECT username FROM player_name_table WHERE agent == 'agent'
+'''
+
 # black == -1
 REGISTER_PLAYER_BLACK_NAME = '''
-INSERT INTO player_name_table(color, username)
-VALUES(-1, ?)
+INSERT INTO player_name_table(color, username, agent)
+VALUES(-1, ?, ?)
 '''
 
 GET_PLAYER_BLACK_NAME = '''

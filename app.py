@@ -21,6 +21,7 @@ from sqlite3_commands import GET_NEXT_TURN
 from sqlite3_commands import GET_PLAYER_BLACK_NAME
 from sqlite3_commands import GET_PLAYER_COLOR
 from sqlite3_commands import GET_PLAYER_WHITE_NAME
+from sqlite3_commands import GET_AGENT_NAME
 from sqlite3_commands import REGISTER_BOARD_INFO
 from sqlite3_commands import REGISTER_PLAYER_BLACK_NAME
 from sqlite3_commands import REGISTER_PLAYER_WHITE_NAME
@@ -58,16 +59,18 @@ def mode_select():
     curs.execute(DELETE_BOARD_INFO_TABLE)
     curs.execute(DELETE_PLAYER_NAME_TABLE)
 
-    username = request.form["username"]
+    username = request.form['username']
+    if not username:
+        username = ' '
     board_list_with_2, player_color = get_initial_status()
     board_list_with_2_strings = intlist2strings(board_list_with_2)
 
     curs.execute(CREATE_PLAYER_NAME_TABLE)
 
     if player_color == 1:
-        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username,))
+        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username,'human'))
     else:
-        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username,))
+        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username,'human'))
 
     curs.execute(CREATE_BOARD_INFO_TABLE)
     curs.execute(REGISTER_BOARD_INFO, (board_list_with_2_strings, -1))
@@ -78,32 +81,43 @@ def mode_select():
     return render_template('mode_select.html')
 
 
-@app.route('/game/dqn', methods=['POST'])
-@app.route('/game/dqn/<index>', methods=['GET'])
-def dqn(index=None):
+@app.route('/play', methods=['POST'])
+@app.route('/play/<index>', methods=['GET'])
+def play(index=None):
     db = get_db()
     curs = db.cursor()
-
+    
     # initialize game
     if request.method == 'POST':
+        mode = request.form['mode']
+
+        # connect  model with agent
+        translate_dict = {
+                'Easy' : 'RANDOM',
+                'Normal' : 'DQN',
+                'Hard' : 'SL'
+                }
+
+        agent_name = translate_dict[mode]
+
         curs.execute(GET_PLAYER_COLOR)
-        dqn_color = -1 * curs.fetchone()[0]
+        agent_color = -1 * curs.fetchone()[0]
         curs.execute(GET_BOARD_INFO)
         board_list_with_2 = strings2intlist(curs.fetchone()[0])
 
         # player is black player (player plays first turn)
-        if dqn_color == 1:
-            curs.execute(REGISTER_PLAYER_WHITE_NAME, ('DQN',))
+        if agent_color == 1:
+            curs.execute(REGISTER_PLAYER_WHITE_NAME, (agent_name, 'agent'))
             winner = 0
             valid_flag = True
 
-        # dqn is black player (dqn plays first turn)
+        # agent is black player (agent plays first turn)
         else:
-            curs.execute(REGISTER_PLAYER_BLACK_NAME, ('DQN',))
+            curs.execute(REGISTER_PLAYER_BLACK_NAME, (agent_name,'agent'))
             # play first turn
             curs.execute(GET_NEXT_TURN)
             next_turn = curs.fetchone()[0]
-            next_index = get_cp_move(board_list_with_2, next_turn, 'DQN')
+            next_index = get_cp_move(board_list_with_2, next_turn, agent_name)
             board_list_with_2, next_turn, winner, valid_flag = \
                 step(board_list_with_2, next_index, next_turn)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
@@ -122,7 +136,7 @@ def dqn(index=None):
         white_stone_num, black_stone_num = count_stone(board_list_with_2)
 
         return render_template(
-            'dqn.html',
+            'play.html',
             white_stone_num=white_stone_num,
             black_stone_num=black_stone_num,
             black_player=black_player,
@@ -135,6 +149,8 @@ def dqn(index=None):
 
     # player put stone (method=='get')
     else:
+
+        # agent_nameをDBから読み込み
         curs.execute(GET_BOARD_INFO)
         board_list_with_2 = strings2intlist(curs.fetchone()[0])
         curs.execute(GET_NEXT_TURN)
@@ -143,11 +159,15 @@ def dqn(index=None):
         black_player = curs.fetchone()[0]
         curs.execute(GET_PLAYER_WHITE_NAME)
         white_player = curs.fetchone()[0]
+        curs.execute(GET_AGENT_NAME)
+        agent_name = curs.fetchone()[0]
+
         # put stone at index and update board (play player turn)
-        if not request.args["index"]:
+        if not request.args['index']:
+            # Developer's birthdate'
             index = 1218
         else:
-            index = int(request.args["index"]) - 1
+            index = int(request.args['index']) - 1
 
         board_list_with_2, next_turn, winner, valid_flag = \
             step(board_list_with_2, index, next_turn)
@@ -161,7 +181,7 @@ def dqn(index=None):
             white_stone_num, black_stone_num = count_stone(board_list_with_2)
 
             return render_template(
-                'dqn.html',
+                'play.html',
                 white_stone_num=white_stone_num,
                 black_stone_num=black_stone_num,
                 black_player=black_player,
@@ -178,10 +198,10 @@ def dqn(index=None):
                      )
 
         while True:
-            # it's DQN turn
-            if (next_turn == 1 and white_player == 'DQN') or \
-                    (next_turn == -1 and black_player == 'DQN'):
-                next_index = get_cp_move(board_list_with_2, next_turn, 'DQN')
+            # it's agent turn
+            if (next_turn == 1 and white_player == agent_name) or \
+                    (next_turn == -1 and black_player == agent_name):
+                next_index = get_cp_move(board_list_with_2, next_turn, agent_name)
                 board_list_with_2, next_turn, winner, valid_flag = \
                     step(board_list_with_2, next_index, next_turn)
 
@@ -195,7 +215,7 @@ def dqn(index=None):
                     white_stone_num, black_stone_num = count_stone(board_list_with_2)
 
                     return render_template(
-                        'dqn.html',
+                        'play.html',
                         white_stone_num=white_stone_num,
                         black_stone_num=black_stone_num,
                         black_player=black_player,
@@ -220,7 +240,7 @@ def dqn(index=None):
                 white_stone_num, black_stone_num = count_stone(board_list_with_2)
 
                 return render_template(
-                    'dqn.html',
+                    'play.html',
                     white_stone_num=white_stone_num,
                     black_stone_num=black_stone_num,
                     black_player=black_player,
