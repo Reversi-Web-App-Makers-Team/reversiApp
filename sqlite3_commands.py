@@ -33,13 +33,17 @@ INSERT INTO player_name_table(color, username, agent)
 VALUES(-1, ?, ?)
 '''
 
-GET_PLAYER_BLACK_NAME = '''
+GET_PLAYER_BLACK_NAME = ''' 
 SELECT username FROM player_name_table WHERE color == -1
 '''
 
 # get player's color
 GET_PLAYER_COLOR = '''
 SELECT color FROM player_name_table LIMIT 1
+'''
+
+GET_AGENT_COLOR = '''
+SELECT color FROM player_name_table where agent=='agent'
 '''
 
 # create table reserving the newest board information (1, -1, 0, 2)
