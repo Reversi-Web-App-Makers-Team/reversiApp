@@ -39,7 +39,7 @@ SELECT username FROM player_name_table WHERE color == -1
 
 # get player's color
 GET_PLAYER_COLOR = '''
-SELECT color FROM player_name_table LIMIT 1
+SELECT color FROM player_name_table where agent=='human'
 '''
 
 GET_AGENT_COLOR = '''

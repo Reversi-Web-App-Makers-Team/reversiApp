@@ -107,8 +107,9 @@ def start_human_vs_agent():
     username = request.form['username']
     if not username:
         username = ' '
-    
-    agent_color = curs.execute(GET_AGENT_COLOR)
+
+    curs.execute(GET_AGENT_COLOR)
+    agent_color = curs.fetchone()[0]
     if agent_color == -1:
         curs.execute(REGISTER_PLAYER_WHITE_NAME, (username,'human'))
     else:
@@ -169,7 +170,10 @@ def play(index=None):
 
         board_list_with_2, _ = get_initial_status()
         board_list_with_2_strings = intlist2strings(board_list_with_2)
-        curs.execute(UPDATE_BOARD_INFO, (board_list_with_2_strings, -1, 0))
+        print("board_list_with_2_strings",type( board_list_with_2_strings))
+        curs.execute(REGISTER_BOARD_INFO, (board_list_with_2_strings, -1))
+        curs.execute(GET_BOARD_INFO)
+        print(curs.fetchone()[0])
 
         # player is black player (player plays first turn)
         if agent_color == 1:
@@ -194,11 +198,13 @@ def play(index=None):
         board_matrix = list2matrix(board_list_with_2)
         curs.execute(GET_PLAYER_BLACK_NAME)
         black_player = curs.fetchone()[0]
+        print("black_player",black_player)
         curs.execute(GET_PLAYER_WHITE_NAME)
         white_player = curs.fetchone()[0]
         db.commit()
         curs.close()
         white_stone_num, black_stone_num = count_stone(board_list_with_2)
+        print("agent_color",agent_color)
         return render_template(
             'play.html',
             white_stone_num=white_stone_num,
