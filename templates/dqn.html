@@ -21,33 +21,38 @@
 </p>
 
 {% for stones in board_matrix %}
+    {% set outer_loop = loop %}
     {% for stone in stones %}
         {% if stone == 1 %}
         <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=60 height=60>
         {% elif stone == -1 %}
         <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=60 height=60>
         {% elif stone == 2 %}
-        <img src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=60 height=60>
+        {% set index = outer_loop.index0*8 + loop.index0 %} 
+ 
+        <form action="/game/dqn/<index>" method="get">
+            <!--
+                <input type="image" name="index" value="" src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=60 height=60>
+            -->
+            <!--
+            <button type="submit" name="index" value="{{index}}" ><img src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=60 height=60></button>
+            -->
+            <input type="submit" name="index" value="{{index}}" id="putable_img" />
+            <!--
+            <input type="hidden" name="index" value="{{index}}">
+            <input type="image" src="../static/images/putable_pos.png" value="" width=60 height=60>
+            -->
+        </form>
+
+       
         {% else %}
         <img src="{{ url_for('static', filename='../static/images/blank.png') }}" width=60 height=60>
         {% endif %}
     {% endfor %}<br>
 {% endfor %}
 
-<p>置ける場所:
-    {% for pos in putable_pos %}
-        {{ pos }}
-    {% endfor %}
-</p>
-
 <p>
-{% if winner == 0 %}
-<form action="/game/dqn/<index>" method="get">
-置く場所の番号を入力して下さい:
-<p><input name="index" type="number"/ ></p>
-<p><input type="submit" value="置く" href="#" class="btn-square"></p>
-</form>
-{% else %}
+{% if winner != 0 %}
 <form action="/fin" method="post">
 ゲームが終わりました<br>
 <p><input type="submit" value="結果を見る" href="#" class="btn-square"></p>

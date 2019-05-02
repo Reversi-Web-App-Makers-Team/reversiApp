@@ -106,7 +106,6 @@ def dqn(index=None):
             next_index = get_cp_move(board_list_with_2, next_turn, 'DQN')
             board_list_with_2, next_turn, winner, valid_flag = \
                 step(board_list_with_2, next_index, next_turn)
-            print(board_list_with_2)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
             curs.execute(UPDATE_BOARD_INFO,
                          (board_list_with_2_strings, next_turn, winner)
