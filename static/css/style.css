@@ -29,3 +29,13 @@
     height: 100px;       /* ※縦横を同値に */
     border-radius: 50%;  /* 角丸半径を50%にする(=円形にする) */
 }
+
+#putable_img{
+ background-image:url("../images/putable_pos.png");
+ background-repeat:no-repeat;
+ border:none;
+ width:60px;
+ height:60px;
+ text-indent:-9999px;
+}
+
