@@ -11,6 +11,10 @@
 </p>
 
 <p>
+    置きたいマスをクリックしてください。石を置くことができるマスは赤矢印のマスです。
+</p>
+
+<p>
 <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=30 height=30>
 先攻 {{ black_player }} : 石の数 {{ black_stone_num }}
 </p>
@@ -23,30 +27,22 @@
 {% for stones in board_matrix %}
     {% set outer_loop = loop %}
     {% for stone in stones %}
+
         {% if stone == 1 %}
         <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=60 height=60>
+
         {% elif stone == -1 %}
         <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=60 height=60>
+
         {% elif stone == 2 %}
-        {% set index = outer_loop.index0*8 + loop.index0 %} 
- 
-        <form action="/game/dqn/<index>" method="get">
-            <!--
-                <input type="image" name="index" value="" src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=60 height=60>
-            -->
-            <!--
-            <button type="submit" name="index" value="{{index}}" ><img src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=60 height=60></button>
-            -->
-            <input type="submit" name="index" value="{{index}}" id="putable_img" />
-            <!--
-            <input type="hidden" name="index" value="{{index}}">
-            <input type="image" src="../static/images/putable_pos.png" value="" width=60 height=60>
-            -->
+        {% set index = outer_loop.index0*8 + loop.index0 + 1 %}
+        <form action="/game/dqn/<index>" method="get" style="display: inline">
+            <button type="submit" name="index" value="{{index}}" ><img src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=45 height=54></button>
         </form>
 
-       
         {% else %}
         <img src="{{ url_for('static', filename='../static/images/blank.png') }}" width=60 height=60>
+
         {% endif %}
     {% endfor %}<br>
 {% endfor %}
