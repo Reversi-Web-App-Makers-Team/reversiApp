@@ -1,6 +1,6 @@
 # reversiApp==1.0.0
 
-<img src="https://raw.github.com/wiki/reversiWebApp/reversiApp/images/demo.gif" width="320px">
+<img src="https://raw.github.com/wiki/reversiWebApp/reversiApp/images/demo.gif" width="1280px">
 
 if you want to play reversi web app, run following command on your shell.
 
