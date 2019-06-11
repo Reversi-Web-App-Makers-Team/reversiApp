@@ -165,10 +165,8 @@ def play(index=None):
 
         board_list_with_2, _ = get_initial_status()
         board_list_with_2_strings = intlist2strings(board_list_with_2)
-        print("board_list_with_2_strings", type(board_list_with_2_strings))
         curs.execute(REGISTER_BOARD_INFO, (board_list_with_2_strings, -1))
         curs.execute(GET_BOARD_INFO)
-        print(curs.fetchone()[0])
 
         # player is black player (player plays first turn)
         if agent_color == 1:
@@ -191,13 +189,11 @@ def play(index=None):
         board_matrix = list2matrix(board_list_with_2)
         curs.execute(GET_PLAYER_BLACK_NAME)
         black_player = curs.fetchone()[0]
-        print("black_player", black_player)
         curs.execute(GET_PLAYER_WHITE_NAME)
         white_player = curs.fetchone()[0]
         db.commit()
         curs.close()
         white_stone_num, black_stone_num = count_stone(board_list_with_2)
-        print("agent_color", agent_color)
         return render_template(
             'play.html',
             white_stone_num=white_stone_num,
@@ -224,8 +220,6 @@ def play(index=None):
         white_player = curs.fetchone()[0]
         curs.execute(GET_AGENT_NAME)
         agent_name = curs.fetchone()[0]
-
-        print(board_list_with_2, next_turn, black_player, white_player, agent_name)
 
         # put stone at index and update board (play player turn)
         if not request.args['index']:
