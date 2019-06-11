@@ -29,8 +29,6 @@ from sqlite3_commands import REGISTER_PLAYER_WHITE_NAME
 from sqlite3_commands import UPDATE_BOARD_INFO
 from sqlite3_commands import DELETE_PLAYER_NAME_TABLE
 from sqlite3_commands import DELETE_BOARD_INFO_TABLE
-
-
 from sqlite3_commands import GET_WINNER
 
 app = Flask(__name__)
@@ -59,23 +57,22 @@ def home():
     curs = db.cursor()
     curs.execute(DELETE_PLAYER_NAME_TABLE)
     curs.execute(CREATE_PLAYER_NAME_TABLE)
-    
+
     # initialize game
     mode = request.form['mode']
 
     # connect  model with agent
     translate_dict = {
-            'Easy' : 'RANDOM',
-            'Normal' : 'DQN',
-            'Hard' : 'SL',
-            'vs Human' : 'human'
+            'Easy': 'RANDOM',
+            'Normal': 'DQN',
+            'Hard': 'SL',
+            'vs Human': 'human'
             }
-
     agent_name = translate_dict[mode]
 
     # human vs agent
     if agent_name != 'human':
-        agent_color = random.choice([-1,1])
+        agent_color = random.choice([-1, 1])
         # agent is black player (agent plays first turn)
         if agent_color == -1:
             curs.execute(REGISTER_PLAYER_BLACK_NAME, (agent_name, 'agent'))
@@ -88,7 +85,6 @@ def home():
 
         return render_template('input_name.html')
 
-        
     # human vs human
     else:
         curs.close()
@@ -97,6 +93,7 @@ def home():
 
 
 @app.route('/start_human_vs_agent', methods=['POST'])
+@app.route('/start_human_vs_agent', methods=['GET'])
 def start_human_vs_agent():
     db = get_db()
     curs = db.cursor()
@@ -104,19 +101,20 @@ def start_human_vs_agent():
     # processing input on the previous page
 
     # agent vs human
-    username = request.form['username']
-    if not username:
-        username = ' '
+    if request.method == 'POST':
+        username = request.form['username']
+        if not username:
+            username = ' '
 
-    curs.execute(GET_AGENT_COLOR)
-    agent_color = curs.fetchone()[0]
-    if agent_color == -1:
-        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username,'human'))
-    else:
-        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username,'human'))
+        curs.execute(GET_AGENT_COLOR)
+        agent_color = curs.fetchone()[0]
+        if agent_color == -1:
+            curs.execute(REGISTER_PLAYER_WHITE_NAME, (username, 'human'))
+        else:
+            curs.execute(REGISTER_PLAYER_BLACK_NAME, (username, 'human'))
 
-    db.commit()
-    curs.close()
+        db.commit()
+        curs.close()
     return render_template('start.html')
 
 
@@ -129,19 +127,19 @@ def start_human_vs_human():
 
     username_1 = request.form['username_1']
     username_2 = request.form['username_2']
-        
+
     # human1's color (-1 or 1)
-    human1_color = random.choice([-1,1])
-    
-    #human1 is Black player
+    human1_color = random.choice([-1, 1])
+
+    # human1 is Black player
     if human1_color == -1:
-        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username_2,'human'))
-        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username_1,'human'))
-    
-    #human1 is White  player
+        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username_2, 'human'))
+        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username_1, 'human'))
+
+    # human1 is White  player
     else:
-        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username_1,'human'))
-        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username_2,'human'))
+        curs.execute(REGISTER_PLAYER_WHITE_NAME, (username_1, 'human'))
+        curs.execute(REGISTER_PLAYER_BLACK_NAME, (username_2, 'human'))
 
     db.commit()
     curs.close()
@@ -152,14 +150,11 @@ def start_human_vs_human():
 @app.route('/play', methods=['POST'])
 @app.route('/play/<index>', methods=['GET'])
 def play(index=None):
-    
     db = get_db()
     curs = db.cursor()
-    
     # initialize game
     if request.method == 'POST':
-       
-         # initialize table
+        # initialize table
         curs.execute(CREATE_BOARD_INFO_TABLE)
 
         curs.execute(GET_AGENT_NAME)
@@ -170,7 +165,7 @@ def play(index=None):
 
         board_list_with_2, _ = get_initial_status()
         board_list_with_2_strings = intlist2strings(board_list_with_2)
-        print("board_list_with_2_strings",type( board_list_with_2_strings))
+        print("board_list_with_2_strings", type(board_list_with_2_strings))
         curs.execute(REGISTER_BOARD_INFO, (board_list_with_2_strings, -1))
         curs.execute(GET_BOARD_INFO)
         print(curs.fetchone()[0])
@@ -179,8 +174,6 @@ def play(index=None):
         if agent_color == 1:
             winner = 0
             valid_flag = True
-
-
         # agent is black player (agent plays first turn)
         else:
             # agent first turn
@@ -198,13 +191,13 @@ def play(index=None):
         board_matrix = list2matrix(board_list_with_2)
         curs.execute(GET_PLAYER_BLACK_NAME)
         black_player = curs.fetchone()[0]
-        print("black_player",black_player)
+        print("black_player", black_player)
         curs.execute(GET_PLAYER_WHITE_NAME)
         white_player = curs.fetchone()[0]
         db.commit()
         curs.close()
         white_stone_num, black_stone_num = count_stone(board_list_with_2)
-        print("agent_color",agent_color)
+        print("agent_color", agent_color)
         return render_template(
             'play.html',
             white_stone_num=white_stone_num,
@@ -231,10 +224,8 @@ def play(index=None):
         white_player = curs.fetchone()[0]
         curs.execute(GET_AGENT_NAME)
         agent_name = curs.fetchone()[0]
-        
 
         print(board_list_with_2, next_turn, black_player, white_player, agent_name)
-
 
         # put stone at index and update board (play player turn)
         if not request.args['index']:
