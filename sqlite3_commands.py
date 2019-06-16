@@ -3,7 +3,7 @@ CREATE_PLAYER_NAME_TABLE = '''
 CREATE TABLE IF NOT EXISTS player_name_table(
 color INTEGER,
 username TEXT,
-agent TEXT
+attribute TEXT
 )
 '''
 
@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS player_name_table
 # methods to control player_name_table
 # white == 1
 REGISTER_PLAYER_WHITE_NAME = '''
-INSERT INTO player_name_table(color, username, agent)
+INSERT INTO player_name_table(color, username, attribute)
 VALUES(1, ?, ?)
 '''
 
@@ -24,22 +24,26 @@ SELECT username FROM player_name_table WHERE color == 1
 '''
 
 GET_AGENT_NAME = '''
-SELECT username FROM player_name_table WHERE agent == 'agent'
+SELECT username FROM player_name_table WHERE attribute == 'agent'
 '''
 
 # black == -1
 REGISTER_PLAYER_BLACK_NAME = '''
-INSERT INTO player_name_table(color, username, agent)
+INSERT INTO player_name_table(color, username, attribute)
 VALUES(-1, ?, ?)
 '''
 
-GET_PLAYER_BLACK_NAME = '''
+GET_PLAYER_BLACK_NAME = ''' 
 SELECT username FROM player_name_table WHERE color == -1
 '''
 
 # get player's color
 GET_PLAYER_COLOR = '''
-SELECT color FROM player_name_table LIMIT 1
+SELECT color FROM player_name_table where attribute=='human'
+'''
+
+GET_AGENT_COLOR = '''
+SELECT color FROM player_name_table where attribute=='agent'
 '''
 
 # create table reserving the newest board information (1, -1, 0, 2)
