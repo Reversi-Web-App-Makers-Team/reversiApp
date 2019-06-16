@@ -155,6 +155,7 @@ def play(index=None):
     # initialize game
     if request.method == 'POST':
         # initialize table
+        curs.execute(DELETE_BOARD_INFO_TABLE)
         curs.execute(CREATE_BOARD_INFO_TABLE)
 
         curs.execute(GET_AGENT_NAME)
