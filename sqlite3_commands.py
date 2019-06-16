@@ -85,4 +85,3 @@ SELECT next_turn FROM board_info_table
 GET_WINNER = '''
 SELECT winner FROM board_info_table
 '''
-

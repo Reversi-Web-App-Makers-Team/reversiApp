@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='../static/css/style.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='../static/css/style.css') }}">
 <body>
 <h1>Reversi Web App</h1>
 
@@ -14,27 +14,28 @@
     置きたいマスをクリックしてください。石を置くことができるマスは赤矢印のマスです。
 </p>
 
-<p>
-
-<img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=30 height=30>
-先攻 {{ black_player }} : 石の数 {{ black_stone_num }}
-</p>
 
 <p>
-<img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=30 height=30>
-後攻 {{ white_player }} : 石の数 {{ white_stone_num }}
-</p>
 
-<p>
-{% if next_turn == 1 %}
-    {{ white_player }} 
-    <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=30 height=30>
-    の番です
-{% elif next_turn == -1 %}
-    {{ black_player }}  
     <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=30 height=30>
-    の番です
-{% endif %}
+    先攻 {{ black_player }} : 石の数 {{ black_stone_num }}
+</p>
+
+<p>
+    <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=30 height=30>
+    後攻 {{ white_player }} : 石の数 {{ white_stone_num }}
+</p>
+
+<p>
+    {% if next_turn == 1 %}
+        {{ white_player }}
+        <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=30 height=30>
+        の番です
+    {% elif next_turn == -1 %}
+        {{ black_player }}
+        <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=30 height=30>
+        の番です
+    {% endif %}
 
 
 </p>
@@ -44,31 +45,33 @@
     {% for stone in stones %}
 
         {% if stone == 1 %}
-        <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=60 height=60>
+            <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=60 height=60>
 
         {% elif stone == -1 %}
-        <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=60 height=60>
+            <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=60 height=60>
 
         {% elif stone == 2 %}
-        {% set index = outer_loop.index0*8 + loop.index0 + 1 %}
-        <form action="/play/<index>" method="get" style="display: inline">
-            <button type="submit" name="index" value="{{index}}" ><img src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=45 height=54></button>
-        </form>
+            {% set index = outer_loop.index0*8 + loop.index0 + 1 %}
+            <form action="/play/<index>" method="get" style="display: inline">
+                <button type="submit" name="index" value="{{ index }}"><img
+                        src="{{ url_for('static', filename='../static/images/putable_pos.png') }}" width=45 height=54>
+                </button>
+            </form>
 
         {% else %}
-        <img src="{{ url_for('static', filename='../static/images/blank.png') }}" width=60 height=60>
-  
+            <img src="{{ url_for('static', filename='../static/images/blank.png') }}" width=60 height=60>
+
         {% endif %}
     {% endfor %}<br>
 {% endfor %}
 
 <p>
-{% if winner != 0 %}
-<form action="/fin" method="post">
-ゲームが終わりました<br>
-<p><input type="submit" value="結果を見る" href="#" class="btn-square"></p>
-</form>
-{% endif %}
+    {% if winner != 0 %}
+        <form action="/fin" method="post">
+            ゲームが終わりました<br>
+        <p><input type="submit" value="結果を見る" href="#" class="btn-square"></p>
+        </form>
+    {% endif %}
 </p>
 </body>
 </html>

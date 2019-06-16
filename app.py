@@ -5,6 +5,7 @@ from flask import Flask
 from flask import g
 from flask import render_template
 from flask import request
+from reversiTools.web_app_reversi_tools import count_stone
 from reversiTools.web_app_reversi_tools import get_cp_move
 from reversiTools.web_app_reversi_tools import get_initial_status
 from reversiTools.web_app_reversi_tools import get_simple_board
@@ -13,24 +14,24 @@ from reversiTools.web_app_reversi_tools import intlist2strings
 from reversiTools.web_app_reversi_tools import list2matrix
 from reversiTools.web_app_reversi_tools import step
 from reversiTools.web_app_reversi_tools import strings2intlist
-from reversiTools.web_app_reversi_tools import count_stone
+
 from sqlite3_commands import CREATE_BOARD_INFO_TABLE
 from sqlite3_commands import CREATE_PLAYER_NAME_TABLE
+from sqlite3_commands import DELETE_BOARD_INFO_TABLE
+from sqlite3_commands import DELETE_PLAYER_NAME_TABLE
+from sqlite3_commands import GET_AGENT_COLOR
+from sqlite3_commands import GET_AGENT_NAME
+from sqlite3_commands import GET_BLACK_ATTRIBUTE
 from sqlite3_commands import GET_BOARD_INFO
 from sqlite3_commands import GET_NEXT_TURN
 from sqlite3_commands import GET_PLAYER_BLACK_NAME
 from sqlite3_commands import GET_PLAYER_WHITE_NAME
+from sqlite3_commands import GET_WHITE_ATTRIBUTE
+from sqlite3_commands import GET_WINNER
 from sqlite3_commands import REGISTER_BOARD_INFO
 from sqlite3_commands import REGISTER_PLAYER_BLACK_NAME
 from sqlite3_commands import REGISTER_PLAYER_WHITE_NAME
 from sqlite3_commands import UPDATE_BOARD_INFO
-from sqlite3_commands import DELETE_PLAYER_NAME_TABLE
-from sqlite3_commands import DELETE_BOARD_INFO_TABLE
-from sqlite3_commands import GET_WINNER
-from sqlite3_commands import GET_WHITE_ATTRIBUTE
-from sqlite3_commands import GET_BLACK_ATTRIBUTE
-from sqlite3_commands import GET_AGENT_COLOR
-from sqlite3_commands import GET_AGENT_NAME
 
 app = Flask(__name__)
 
@@ -64,11 +65,11 @@ def home():
 
     # connect  model with agent
     translate_dict = {
-            'Easy': 'RANDOM',
-            'Normal': 'DQN',
-            'Hard': 'SL',
-            'vs Human': 'human'
-            }
+        'Easy': 'RANDOM',
+        'Normal': 'DQN',
+        'Hard': 'SL',
+        'vs Human': 'human'
+    }
     agent_name = translate_dict[mode]
 
     # human vs agent
@@ -162,7 +163,7 @@ def play(index=None):
 
         curs.execute(GET_WHITE_ATTRIBUTE)
         white_attribute = curs.fetchone()[0]
-        
+
         curs.execute(GET_PLAYER_BLACK_NAME)
         black_name = curs.fetchone()[0]
         curs.execute(GET_BLACK_ATTRIBUTE)
@@ -339,9 +340,9 @@ def fin():
     db.commit()
     curs.close()
     return render_template(
-            'fin.html',
-            winner=winner,
-            name=name
+        'fin.html',
+        winner=winner,
+        name=name
     )
 
 
