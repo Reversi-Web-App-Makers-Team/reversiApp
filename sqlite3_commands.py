@@ -23,8 +23,8 @@ GET_PLAYER_WHITE_NAME = '''
 SELECT username FROM player_name_table WHERE color == 1
 '''
 
-GET_AGENT_NAME = '''
-SELECT username FROM player_name_table WHERE attribute == 'agent'
+GET_WHITE_ATTRIBUTE = '''
+SELECT attribute FROM player_name_table WHERE color == 1
 '''
 
 # black == -1
@@ -37,13 +37,12 @@ GET_PLAYER_BLACK_NAME = '''
 SELECT username FROM player_name_table WHERE color == -1
 '''
 
-# get player's color
-GET_PLAYER_COLOR = '''
-SELECT color FROM player_name_table where attribute=='human'
+GET_BLACK_ATTRIBUTE = '''
+SELECT attribute FROM player_name_table WHERE color == -1
 '''
 
 GET_AGENT_COLOR = '''
-SELECT color FROM player_name_table where attribute=='agent'
+SELECT color FROM player_name_table WHERE attribute != 'human'
 '''
 
 # create table reserving the newest board information (1, -1, 0, 2)
@@ -79,7 +78,7 @@ GET_NEXT_TURN = '''
 SELECT next_turn FROM board_info_table
 '''
 
-
 GET_WINNER = '''
 SELECT winner FROM board_info_table
 '''
+

@@ -20,9 +20,7 @@ from sqlite3_commands import CREATE_PLAYER_NAME_TABLE
 from sqlite3_commands import GET_BOARD_INFO
 from sqlite3_commands import GET_NEXT_TURN
 from sqlite3_commands import GET_PLAYER_BLACK_NAME
-from sqlite3_commands import GET_AGENT_COLOR
 from sqlite3_commands import GET_PLAYER_WHITE_NAME
-from sqlite3_commands import GET_AGENT_NAME
 from sqlite3_commands import REGISTER_BOARD_INFO
 from sqlite3_commands import REGISTER_PLAYER_BLACK_NAME
 from sqlite3_commands import REGISTER_PLAYER_WHITE_NAME
@@ -30,6 +28,9 @@ from sqlite3_commands import UPDATE_BOARD_INFO
 from sqlite3_commands import DELETE_PLAYER_NAME_TABLE
 from sqlite3_commands import DELETE_BOARD_INFO_TABLE
 from sqlite3_commands import GET_WINNER
+from sqlite3_commands import GET_WHITE_ATTRIBUTE
+from sqlite3_commands import GET_BLACK_ATTRIBUTE
+from sqlite3_commands import GET_AGENT_COLOR
 
 app = Flask(__name__)
 
@@ -75,11 +76,11 @@ def home():
         agent_color = random.choice([-1, 1])
         # agent is black player (agent plays first turn)
         if agent_color == -1:
-            curs.execute(REGISTER_PLAYER_BLACK_NAME, (agent_name, 'agent'))
+            curs.execute(REGISTER_PLAYER_BLACK_NAME, (agent_name, 'attribute'))
 
         # agent is white player (human plays first turn)
         else:
-            curs.execute(REGISTER_PLAYER_WHITE_NAME, (agent_name, 'agent'))
+            curs.execute(REGISTER_PLAYER_WHITE_NAME, (agent_name, 'attribute'))
         db.commit()
         curs.close()
 
@@ -108,6 +109,7 @@ def start_human_vs_agent():
 
         curs.execute(GET_AGENT_COLOR)
         agent_color = curs.fetchone()[0]
+
         if agent_color == -1:
             curs.execute(REGISTER_PLAYER_WHITE_NAME, (username, 'human'))
         else:
@@ -158,33 +160,37 @@ def play(index=None):
         curs.execute(DELETE_BOARD_INFO_TABLE)
         curs.execute(CREATE_BOARD_INFO_TABLE)
 
-        curs.execute(GET_AGENT_NAME)
-        agent_name = curs.fetchone()[0]
-
-        curs.execute(GET_AGENT_COLOR)
-        agent_color = curs.fetchone()[0]
-
+        curs.execute(GET_WHITE_ATTRIBUTE)
+        white_attribute = curs.fetchone()[0]
+        
+        curs.execute(GET_PLAYER_BLACK_NAME)
+        black_name = curs.fetchone()[0]
+        curs.execute(GET_BLACK_ATTRIBUTE)
+        black_attribute = curs.fetchone()[0]
         board_list_with_2, _ = get_initial_status()
         board_list_with_2_strings = intlist2strings(board_list_with_2)
         curs.execute(REGISTER_BOARD_INFO, (board_list_with_2_strings, -1))
         curs.execute(GET_BOARD_INFO)
 
         # player is black player (player plays first turn)
-        if agent_color == 1:
+        if black_attribute == 'human':
             winner = 0
             valid_flag = True
         # agent is black player (agent plays first turn)
-        else:
+        elif black_attribute == 'agent':
             # agent first turn
             next_turn = 1
             winner = 0
-            next_index = get_cp_move(board_list_with_2, next_turn, agent_name)
+            next_index = get_cp_move(board_list_with_2, next_turn, black_name)
             board_list_with_2, next_turn, winner, valid_flag = \
                 step(board_list_with_2, next_index, next_turn)
             board_list_with_2_strings = intlist2strings(board_list_with_2)
             curs.execute(UPDATE_BOARD_INFO,
                          (board_list_with_2_strings, next_turn, winner)
                          )
+        else:
+            raise ValueError("Unexpected atrribute value")
+
 
         _, putable_pos = get_simple_board(board_list_with_2)
         board_matrix = list2matrix(board_list_with_2)
@@ -209,7 +215,6 @@ def play(index=None):
 
     # player put stone (method=='get')
     else:
-
         # agent_nameをDBから読み込み
         curs.execute(GET_BOARD_INFO)
         board_list_with_2 = strings2intlist(curs.fetchone()[0])
@@ -219,8 +224,10 @@ def play(index=None):
         black_player = curs.fetchone()[0]
         curs.execute(GET_PLAYER_WHITE_NAME)
         white_player = curs.fetchone()[0]
-        curs.execute(GET_AGENT_NAME)
-        agent_name = curs.fetchone()[0]
+        curs.execute(GET_WHITE_ATTRIBUTE)
+        white_attribute = curs.fetchone()[0]
+        curs.execute(GET_BLACK_ATTRIBUTE)
+        black_attribute = curs.fetchone()[0]
 
         # put stone at index and update board (play player turn)
         if not request.args['index']:
@@ -259,8 +266,8 @@ def play(index=None):
 
         while True:
             # it's agent turn
-            if (next_turn == 1 and white_player == agent_name) or \
-                    (next_turn == -1 and black_player == agent_name):
+            if (next_turn == 1 and white_attribute=="agent") or \
+                    (next_turn == -1 and black_attribute == "agent"):
                 next_index = get_cp_move(board_list_with_2, next_turn, agent_name)
                 board_list_with_2, next_turn, winner, valid_flag = \
                     step(board_list_with_2, next_index, next_turn)
