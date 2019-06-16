@@ -14,7 +14,6 @@ from reversiTools.web_app_reversi_tools import list2matrix
 from reversiTools.web_app_reversi_tools import step
 from reversiTools.web_app_reversi_tools import strings2intlist
 from reversiTools.web_app_reversi_tools import count_stone
-
 from sqlite3_commands import CREATE_BOARD_INFO_TABLE
 from sqlite3_commands import CREATE_PLAYER_NAME_TABLE
 from sqlite3_commands import GET_BOARD_INFO
@@ -31,6 +30,7 @@ from sqlite3_commands import GET_WINNER
 from sqlite3_commands import GET_WHITE_ATTRIBUTE
 from sqlite3_commands import GET_BLACK_ATTRIBUTE
 from sqlite3_commands import GET_AGENT_COLOR
+from sqlite3_commands import GET_AGENT_NAME
 
 app = Flask(__name__)
 
@@ -76,11 +76,11 @@ def home():
         agent_color = random.choice([-1, 1])
         # agent is black player (agent plays first turn)
         if agent_color == -1:
-            curs.execute(REGISTER_PLAYER_BLACK_NAME, (agent_name, 'attribute'))
+            curs.execute(REGISTER_PLAYER_BLACK_NAME, (agent_name, 'agent'))
 
         # agent is white player (human plays first turn)
         else:
-            curs.execute(REGISTER_PLAYER_WHITE_NAME, (agent_name, 'attribute'))
+            curs.execute(REGISTER_PLAYER_WHITE_NAME, (agent_name, 'agent'))
         db.commit()
         curs.close()
 
@@ -174,12 +174,13 @@ def play(index=None):
 
         # player is black player (player plays first turn)
         if black_attribute == 'human':
+            next_turn = -1
             winner = 0
             valid_flag = True
         # agent is black player (agent plays first turn)
-        elif black_attribute == 'agent':
+        else:
             # agent first turn
-            next_turn = 1
+            next_turn = -1
             winner = 0
             next_index = get_cp_move(board_list_with_2, next_turn, black_name)
             board_list_with_2, next_turn, winner, valid_flag = \
@@ -188,10 +189,6 @@ def play(index=None):
             curs.execute(UPDATE_BOARD_INFO,
                          (board_list_with_2_strings, next_turn, winner)
                          )
-        else:
-            raise ValueError("Unexpected atrribute value")
-
-
         _, putable_pos = get_simple_board(board_list_with_2)
         board_matrix = list2matrix(board_list_with_2)
         curs.execute(GET_PLAYER_BLACK_NAME)
@@ -210,7 +207,8 @@ def play(index=None):
             board_matrix=board_matrix,
             putable_pos=inc_list(putable_pos),
             winner=winner,
-            valid_flag=valid_flag
+            valid_flag=valid_flag,
+            next_turn=next_turn
         )
 
     # player put stone (method=='get')
@@ -256,7 +254,8 @@ def play(index=None):
                 board_matrix=board_matrix,
                 putable_pos=inc_list(putable_pos),
                 winner=winner,
-                valid_flag=valid_flag
+                valid_flag=valid_flag,
+                next_turn=next_turn
             )
 
         board_list_with_2_strings = intlist2strings(board_list_with_2)
@@ -266,8 +265,10 @@ def play(index=None):
 
         while True:
             # it's agent turn
-            if (next_turn == 1 and white_attribute=="agent") or \
+            if (next_turn == 1 and white_attribute == "agent") or \
                     (next_turn == -1 and black_attribute == "agent"):
+                curs.execute(GET_AGENT_NAME)
+                agent_name = curs.fetchone()[0]
                 next_index = get_cp_move(board_list_with_2, next_turn, agent_name)
                 board_list_with_2, next_turn, winner, valid_flag = \
                     step(board_list_with_2, next_index, next_turn)
@@ -290,7 +291,8 @@ def play(index=None):
                         board_matrix=board_matrix,
                         putable_pos=inc_list(putable_pos),
                         winner=winner,
-                        valid_flag=valid_flag
+                        valid_flag=valid_flag,
+                        next_turn=next_turn
                     )
                 board_list_with_2_strings = intlist2strings(board_list_with_2)
                 curs.execute(UPDATE_BOARD_INFO,
@@ -315,7 +317,8 @@ def play(index=None):
                     board_matrix=board_matrix,
                     putable_pos=inc_list(putable_pos),
                     winner=winner,
-                    valid_flag=valid_flag
+                    valid_flag=valid_flag,
+                    next_turn=next_turn
                 )
 
 

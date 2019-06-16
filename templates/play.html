@@ -25,6 +25,20 @@
 後攻 {{ white_player }} : 石の数 {{ white_stone_num }}
 </p>
 
+<p>
+{% if next_turn == 1 %}
+    {{ white_player }} 
+    <img src="{{ url_for('static', filename='../static/images/white_stone.png') }}" width=30 height=30>
+    の番です
+{% elif next_turn == -1 %}
+    {{ black_player }}  
+    <img src="{{ url_for('static', filename='../static/images/black_stone.png') }}" width=30 height=30>
+    の番です
+{% endif %}
+
+
+</p>
+
 {% for stones in board_matrix %}
     {% set outer_loop = loop %}
     {% for stone in stones %}

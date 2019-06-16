@@ -45,6 +45,10 @@ GET_AGENT_COLOR = '''
 SELECT color FROM player_name_table WHERE attribute != 'human'
 '''
 
+GET_AGENT_NAME = '''
+SELECT username FROM player_name_table WHERE attribute!='human'
+'''
+
 # create table reserving the newest board information (1, -1, 0, 2)
 CREATE_BOARD_INFO_TABLE = '''
 CREATE TABLE IF NOT EXISTS board_info_table(
