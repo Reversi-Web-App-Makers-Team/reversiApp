@@ -7,4 +7,4 @@ numpy==1.16.2
 reversiTool==1.0.20
 toml==0.10.0
 torch==1.0.1.post2
-Werkzeug==0.15.1
+Werkzeug==0.15.3
